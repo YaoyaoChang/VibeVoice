@@ -1,10 +1,261 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Hello GitHub Pages</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>VibeVoice: Project & Demo</title>
+  <meta name="description" content="VibeVoice project page and audio demos." />
+  <style>
+    :root {
+      --bg: #0b0c10; --card: #111216; --muted:#9aa3af; --text:#e5e7eb; --accent:#60a5fa;
+      --border:#20222a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font: 16px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color: var(--text); background: radial-gradient(1200px 600px at 30% -10%, #172033 0%, #0b0c10 40%) no-repeat, var(--bg);
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 20px 60px; }
+    header { display: grid; gap: 8px; margin-bottom: 24px; }
+    .title { font-size: clamp(28px, 4vw, 40px); font-weight: 800; letter-spacing: 0.2px; }
+    .subtitle { color: var(--muted); }
+    .authors { color: var(--muted); font-size: 14px; }
+    .chip {
+      display:inline-block; padding:2px 8px; border:1px solid var(--border); border-radius:999px; color:var(--muted); font-size:12px; margin-left:8px;
+    }
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));
+      border: 1px solid var(--border); border-radius: 16px; padding: 18px; box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+    }
+    .grid { display: grid; gap: 16px; }
+    .grid.cols-2 { grid-template-columns: repeat(1, minmax(0,1fr)); }
+    @media (min-width: 900px){ .grid.cols-2 { grid-template-columns: 1.05fr 0.95fr; } }
+    figure { margin: 0; border-radius: 14px; overflow: hidden; border:1px solid var(--border); background:#0d0f15; }
+    figure img { width: 100%; display: block; }
+    figure figcaption { font-size: 14px; color: var(--muted); padding: 10px 12px; border-top:1px solid var(--border); }
+    h2 { margin: 22px 0 10px; font-size: 22px; }
+    .muted { color: var(--muted); }
+    .abstract { font-size: 15px; }
+    .demo { padding: 14px; border:1px dashed #2a2f3a; border-radius: 12px; background: rgba(255,255,255,0.02); }
+    .prompt { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 14px; background:#0b0d12; border:1px solid var(--border); padding:10px 12px; border-radius:10px; color:#d1d5db; }
+    .audios { display:grid; grid-template-columns: repeat(1, minmax(0,1fr)); gap: 10px; margin-top: 12px; }
+    @media (min-width:700px){ .audios { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+    .audio-row {
+      display:flex; align-items:center; gap:10px; border:1px solid var(--border); border-radius:12px; padding:10px 12px; background: #0e1118;
+    }
+    .badge {
+      font-size: 12px; padding: 2px 8px; border-radius: 999px; border:1px solid var(--border); color:#cbd5e1; white-space:nowrap;
+    }
+    audio { width: 100%; }
+    footer { margin-top: 36px; color: var(--muted); font-size: 13px; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+    .toc { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+    .toc a { font-size: 13px; border:1px solid var(--border); padding:6px 10px; border-radius:999px; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+  </style>
 </head>
 <body>
-  <h1>你好，这是我的第一个 GitHub Pages 网站！</h1>
+  <div class="wrap">
+    <header>
+      <div class="title">VibeVoice <span class="chip">Project Page</span> <span class="chip">Audio Demo</span></div>
+      <div class="subtitle">Expressive & robust text-to-speech for long-form and conversational settings</div>
+      <div class="authors">Yaoyao Chang · VibeVoice Team</div>
+      <nav class="toc">
+        <a href="#abstract">Abstract</a>
+        <a href="#figure">Figure</a>
+        <a href="#demos">Demos</a>
+        <a href="#bib">BibTeX</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </header>
+
+    <div class="grid cols-2">
+      <!-- Left: Abstract -->
+      <section id="abstract" class="card">
+        <h2>Abstract</h2>
+        <p class="abstract">
+          We present <strong>VibeVoice</strong>, a neural TTS system designed to preserve prosody and vibe across diverse speaking styles,
+          while remaining robust to long inputs and noisy punctuation. Compared to baselines (e.g., Gemini TTS, ElevenLabs), VibeVoice
+          aims to produce more stable phrasing, consistent timbre, and better pause planning for downstream alignment tasks.
+          We release audio demos and prompts for reproducibility.
+        </p>
+        <p class="muted">
+          Replace this abstract with your actual paper/project summary. Keep it concise (≈100–150 words).
+        </p>
+      </section>
+
+      <!-- Right: Figure -->
+      <section id="figure" class="card">
+        <h2>Figure 1</h2>
+        <figure>
+          <!-- Replace with your image path, e.g., assets/teaser.png -->
+          <img src="assets/teaser.png" alt="VibeVoice system overview / teaser" />
+          <figcaption>
+            <span class="mono">Fig. 1.</span> Teaser / system overview. Place your pipeline or qualitative illustration here.
+            Use a transparent PNG/SVG for best sharpness on dark background.
+          </figcaption>
+        </figure>
+      </section>
+    </div>
+
+    <!-- DEMOS -->
+    <section id="demos" class="card" style="margin-top:16px;">
+      <h2>Audio Demos</h2>
+      <p class="muted">Each demo shows the input text and outputs from multiple systems (Gemini, ElevenLabs, Ours, …). Replace <span class="mono">src</span> with your audio files.</p>
+
+      <!-- Demo 1 -->
+      <div class="demo" id="demo1">
+        <div class="muted">Demo 1</div>
+        <div class="prompt">“In a world of constant noise, clarity is a competitive edge. VibeVoice focuses on rhythm and phrasing to make words land.”</div>
+        <div class="audios" aria-label="Demo 1 audio comparisons">
+          <div class="audio-row">
+            <span class="badge">Gemini</span>
+            <audio controls preload="none">
+              <source src="assets/audio/demo1_gemini.mp3" type="audio/mpeg" />
+              <source src="assets/audio/demo1_gemini.ogg" type="audio/ogg" />
+              Your browser does not support the audio element.
+            </audio>
+          </div>
+          <div class="audio-row">
+            <span class="badge">ElevenLabs</span>
+            <audio controls preload="none">
+              <source src="assets/audio/demo1_elevenlabs.mp3" type="audio/mpeg" />
+              <source src="assets/audio/demo1_elevenlabs.ogg" type="audio/ogg" />
+            </audio>
+          </div>
+          <div class="audio-row">
+            <span class="badge">Ours (VibeVoice)</span>
+            <audio controls preload="none">
+              <source src="assets/audio/demo1_ours.mp3" type="audio/mpeg" />
+              <source src="assets/audio/demo1_ours.ogg" type="audio/ogg" />
+            </audio>
+          </div>
+          <div class="audio-row">
+            <span class="badge">Baseline</span>
+            <audio controls preload="none">
+              <source src="assets/audio/demo1_baseline.mp3" type="audio/mpeg" />
+              <source src="assets/audio/demo1_baseline.ogg" type="audio/ogg" />
+            </audio>
+          </div>
+        </div>
+      </div>
+
+      <!-- Demo 2 -->
+      <div class="demo" id="demo2" style="margin-top:12px;">
+        <div class="muted">Demo 2</div>
+        <div class="prompt">“Numbers matter: 1.2 million users, 35% growth, and latency under 120 milliseconds—say it cleanly, confidently, and consistently.”</div>
+        <div class="audios" aria-label="Demo 2 audio comparisons">
+          <div class="audio-row">
+            <span class="badge">Gemini</span>
+            <audio controls preload="none">
+              <source src="assets/audio/demo2_gemini.mp3" type="audio/mpeg" />
+              <source src="assets/audio/demo2_gemini.ogg" type="audio/ogg" />
+            </audio>
+          </div>
+          <div class="audio-row">
+            <span class="badge">ElevenLabs</span>
+            <audio controls preload="none">
+              <source src="assets/audio/demo2_elevenlabs.mp3" type="audio/mpeg" />
+              <source src="assets/audio/demo2_elevenlabs.ogg" type="audio/ogg" />
+            </audio>
+          </div>
+          <div class="audio-row">
+            <span class="badge">Ours (VibeVoice)</span>
+            <audio controls preload="none">
+              <source src="assets/audio/demo2_ours.mp3" type="audio/mpeg" />
+              <source src="assets/audio/demo2_ours.ogg" type="audio/ogg" />
+            </audio>
+          </div>
+        </div>
+      </div>
+
+      <!-- Demo 3 -->
+      <div class="demo" id="demo3" style="margin-top:12px;">
+        <div class="muted">Demo 3</div>
+        <div class="prompt">“Hey, thanks for waiting. I pulled the latest logs—here’s what changed between the two builds and why the patch matters.”</div>
+        <div class="audios" aria-label="Demo 3 audio comparisons">
+          <div class="audio-row">
+            <span class="badge">Gemini</span>
+            <audio controls preload="none">
+              <source src="assets/audio/demo3_gemini.mp3" type="audio/mpeg" />
+              <source src="assets/audio/demo3_gemini.ogg" type="audio/ogg" />
+            </audio>
+          </div>
+          <div class="audio-row">
+            <span class="badge">ElevenLabs</span>
+            <audio controls preload="none">
+              <source src="assets/audio/demo3_elevenlabs.mp3" type="audio/mpeg" />
+              <source src="assets/audio/demo3_elevenlabs.ogg" type="audio/ogg" />
+            </audio>
+          </div>
+          <div class="audio-row">
+            <span class="badge">Ours (VibeVoice)</span>
+            <audio controls preload="none">
+              <source src="assets/audio/demo3_ours.mp3" type="audio/mpeg" />
+              <source src="assets/audio/demo3_ours.ogg" type="audio/ogg" />
+            </audio>
+          </div>
+        </div>
+      </div>
+
+      <!-- Demo 4 -->
+      <div class="demo" id="demo4" style="margin-top:12px;">
+        <div class="muted">Demo 4</div>
+        <div class="prompt">“午夜电台的下一首，是一段缓慢升温的节拍。闭上眼睛，呼吸，和你的心跳对齐。”</div>
+        <div class="audios" aria-label="Demo 4 audio comparisons">
+          <div class="audio-row">
+            <span class="badge">Gemini</span>
+            <audio controls preload="none">
+              <source src="assets/audio/demo4_gemini.mp3" type="audio/mpeg" />
+              <source src="assets/audio/demo4_gemini.ogg" type="audio/ogg" />
+            </audio>
+          </div>
+          <div class="audio-row">
+            <span class="badge">ElevenLabs</span>
+            <audio controls preload="none">
+              <source src="assets/audio/demo4_elevenlabs.mp3" type="audio/mpeg" />
+              <source src="assets/audio/demo4_elevenlabs.ogg" type="audio/ogg" />
+            </audio>
+          </div>
+          <div class="audio-row">
+            <span class="badge">Ours (VibeVoice)</span>
+            <audio controls preload="none">
+              <source src="assets/audio/demo4_ours.mp3" type="audio/mpeg" />
+              <source src="assets/audio/demo4_ours.ogg" type="audio/ogg" />
+            </audio>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BibTeX -->
+    <section id="bib" class="card" style="margin-top:16px;">
+      <h2>BibTeX</h2>
+      <pre class="mono" style="white-space: pre-wrap; user-select: all;">@article{vibevoice2025,
+  title   = {VibeVoice: Expressive and Robust Text-to-Speech},
+  author  = {Chang, Yaoyao and Others},
+  journal = {ArXiv},
+  year    = {2025},
+  url     = {https://yaoyaochang.github.io/vibevoice/}
+}</pre>
+    </section>
+
+    <footer id="contact">
+      <span>© 2025 VibeVoice</span>
+      <span>
+        <a href="https://github.com/YaoyaoChang/vibevoice" target="_blank" rel="noopener">GitHub Repo</a> ·
+        <a href="#demos">Back to Demos</a>
+      </span>
+    </footer>
+  </div>
+
+  <!-- (Optional) Only one audio plays at a time -->
+  <script>
+    const players = Array.from(document.querySelectorAll('audio'));
+    players.forEach(p => p.addEventListener('play', () => {
+      players.forEach(o => { if (o !== p) o.pause(); });
+    }));
+  </script>
 </body>
 </html>
