@@ -1,261 +1,387 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>VibeVoice: Project & Demo</title>
-  <meta name="description" content="VibeVoice project page and audio demos." />
-  <style>
-    :root {
-      --bg: #0b0c10; --card: #111216; --muted:#9aa3af; --text:#e5e7eb; --accent:#60a5fa;
-      --border:#20222a;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0; font: 16px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      color: var(--text); background: radial-gradient(1200px 600px at 30% -10%, #172033 0%, #0b0c10 40%) no-repeat, var(--bg);
-    }
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 20px 60px; }
-    header { display: grid; gap: 8px; margin-bottom: 24px; }
-    .title { font-size: clamp(28px, 4vw, 40px); font-weight: 800; letter-spacing: 0.2px; }
-    .subtitle { color: var(--muted); }
-    .authors { color: var(--muted); font-size: 14px; }
-    .chip {
-      display:inline-block; padding:2px 8px; border:1px solid var(--border); border-radius:999px; color:var(--muted); font-size:12px; margin-left:8px;
-    }
-    .card {
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));
-      border: 1px solid var(--border); border-radius: 16px; padding: 18px; box-shadow: 0 10px 24px rgba(0,0,0,0.25);
-    }
-    .grid { display: grid; gap: 16px; }
-    .grid.cols-2 { grid-template-columns: repeat(1, minmax(0,1fr)); }
-    @media (min-width: 900px){ .grid.cols-2 { grid-template-columns: 1.05fr 0.95fr; } }
-    figure { margin: 0; border-radius: 14px; overflow: hidden; border:1px solid var(--border); background:#0d0f15; }
-    figure img { width: 100%; display: block; }
-    figure figcaption { font-size: 14px; color: var(--muted); padding: 10px 12px; border-top:1px solid var(--border); }
-    h2 { margin: 22px 0 10px; font-size: 22px; }
-    .muted { color: var(--muted); }
-    .abstract { font-size: 15px; }
-    .demo { padding: 14px; border:1px dashed #2a2f3a; border-radius: 12px; background: rgba(255,255,255,0.02); }
-    .prompt { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 14px; background:#0b0d12; border:1px solid var(--border); padding:10px 12px; border-radius:10px; color:#d1d5db; }
-    .audios { display:grid; grid-template-columns: repeat(1, minmax(0,1fr)); gap: 10px; margin-top: 12px; }
-    @media (min-width:700px){ .audios { grid-template-columns: repeat(2, minmax(0,1fr)); } }
-    .audio-row {
-      display:flex; align-items:center; gap:10px; border:1px solid var(--border); border-radius:12px; padding:10px 12px; background: #0e1118;
-    }
-    .badge {
-      font-size: 12px; padding: 2px 8px; border-radius: 999px; border:1px solid var(--border); color:#cbd5e1; white-space:nowrap;
-    }
-    audio { width: 100%; }
-    footer { margin-top: 36px; color: var(--muted); font-size: 13px; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; }
-    .toc { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
-    .toc a { font-size: 13px; border:1px solid var(--border); padding:6px 10px; border-radius:999px; }
-    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>VibeVoice — Paged Demos with Sync</title>
+<style>
+  :root {
+    --bg:#ffffff;         /* 背景白色 */
+    --card:#f9f9f9;      /* 卡片浅灰 */
+    --muted:#555555;     /* 次级文字灰 */
+    --text:#000000;      /* 主文字黑色 */
+    --border:#dddddd;    /* 边框浅灰 */
+    --accent:#0066cc;    /* 高亮蓝 */
+  }
+
+  * { box-sizing:border-box; }
+  html, body { height:100%; margin:0; }
+  body {
+    color:var(--text);
+    background: var(--bg);
+    font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+    scroll-snap-type:y mandatory;
+    overflow-y:auto;
+  }
+
+  section.page {
+    height:100svh;
+    width:100%;
+    scroll-snap-align:start;
+    scroll-snap-stop:always;
+    display:flex;
+    justify-content:center;
+    align-items:stretch;
+    padding:24px;
+  }
+
+  .wrap {
+    max-width:1100px;
+    width:min(92vw,1100px);
+    display:flex; flex-direction:column;
+    min-height:0; height:100%;
+  }
+  .card {
+    background: var(--card);
+    border:1px solid var(--border); border-radius:16px; padding:20px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.08);
+    display:flex; flex-direction:column; gap:14px;
+    min-height:0; height:100%;
+  }
+  h1 { margin:0; font-size:clamp(28px,4vw,40px); }
+  h2 { margin:0 0 6px; font-size:22px; }
+  .muted { color:var(--muted); }
+
+  .scroll { overflow:auto; min-height:0; flex:1; display:grid; gap:16px; }
+
+  .sync-grid { display:grid; grid-template-columns:1fr; gap:16px; min-height:0; flex:1; }
+  @media (min-width:980px){ .sync-grid { grid-template-columns:0.9fr 1.1fr; } }
+  audio { width:100%; }
+  .meta { color:var(--muted); font-size:14px; }
+  .controls { display:flex; gap:8px; flex-wrap:wrap; }
+  button { background:#f1f1f1; color:var(--text); border:1px solid var(--border); padding:8px 12px; border-radius:10px; cursor:pointer; }
+  button:hover { border-color:#bbb; }
+  .search { display:flex; gap:8px; }
+  .search input { flex:1; background:#fff; color:var(--text); border:1px solid var(--border); padding:8px 10px; border-radius:10px; }
+
+  .transcript { height:100%; min-height:0; overflow:auto; padding:8px; border:1px solid var(--border); border-radius:12px; background:#fff; scroll-behavior:smooth; }
+  .line { display:grid; grid-template-columns:84px 1fr; gap:10px; padding:8px 10px; border-radius:10px; border:1px solid transparent; cursor:pointer; }
+  .line:hover { background:#f5f5f5; border-color:#ddd; }
+  .line.active { background:rgba(0,102,204,0.08); border-color:#0066cc; }
+  .ts { font-family:ui-monospace,Menlo,Consolas,monospace; color:#333; font-size:12px; align-self:center; text-align:right; opacity:.9; }
+  .txt { white-space:pre-wrap; }
+
+  .dots { position:fixed; right:16px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:10px; z-index:20; }
+  .dot { width:10px; height:10px; border-radius:999px; border:1px solid var(--border); background:#eee; cursor:pointer; }
+  .dot.active { background:var(--accent); box-shadow:0 0 0 3px rgba(0,102,204,0.25); }
+
+  figure { margin:0; border-radius:14px; overflow:hidden; border:1px solid var(--border); background:#fff; text-align:center; }
+  figure img { width:60%; display:inline-block; }
+  figure figcaption { font-size:14px; color:var(--muted); padding:10px 12px; border-top:1px solid var(--border); }
+
+  footer { color:var(--muted); font-size:13px; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  h1 { 
+    margin:0; 
+    font-size:clamp(28px,4vw,40px); 
+    text-align:center; 
+  }
+</style>
 </head>
 <body>
+
+<!-- 导航点 + 提示 -->
+<div class="dots" id="dots" aria-label="page dots"></div>
+<!-- <div class="hint">滚轮 / ↑↓ 翻页 · 点击右侧圆点可跳转</div> -->
+
+<!-- Page 1: 概览（一屏，内部自滚动） -->
+<section class="page" id="overview" data-title="Overview">
   <div class="wrap">
-    <header>
-      <div class="title">VibeVoice <span class="chip">Project Page</span> <span class="chip">Audio Demo</span></div>
-      <div class="subtitle">Expressive & robust text-to-speech for long-form and conversational settings</div>
-      <div class="authors">Yaoyao Chang · VibeVoice Team</div>
-      <nav class="toc">
-        <a href="#abstract">Abstract</a>
-        <a href="#figure">Figure</a>
-        <a href="#demos">Demos</a>
-        <a href="#bib">BibTeX</a>
-        <a href="#contact">Contact</a>
-      </nav>
-    </header>
-
-    <div class="grid cols-2">
-      <!-- Left: Abstract -->
-      <section id="abstract" class="card">
-        <h2>Abstract</h2>
-        <p class="abstract">
-          We present <strong>VibeVoice</strong>, a neural TTS system designed to preserve prosody and vibe across diverse speaking styles,
-          while remaining robust to long inputs and noisy punctuation. Compared to baselines (e.g., Gemini TTS, ElevenLabs), VibeVoice
-          aims to produce more stable phrasing, consistent timbre, and better pause planning for downstream alignment tasks.
-          We release audio demos and prompts for reproducibility.
-        </p>
-        <p class="muted">
-          Replace this abstract with your actual paper/project summary. Keep it concise (≈100–150 words).
-        </p>
-      </section>
-
-      <!-- Right: Figure -->
-      <section id="figure" class="card">
-        <h2>Figure 1</h2>
-        <figure>
-          <!-- Replace with your image path, e.g., assets/teaser.png -->
-          <img src="assets/teaser.png" alt="VibeVoice system overview / teaser" />
-          <figcaption>
-            <span class="mono">Fig. 1.</span> Teaser / system overview. Place your pipeline or qualitative illustration here.
-            Use a transparent PNG/SVG for best sharpness on dark background.
-          </figcaption>
-        </figure>
-      </section>
-    </div>
-
-    <!-- DEMOS -->
-    <section id="demos" class="card" style="margin-top:16px;">
-      <h2>Audio Demos</h2>
-      <p class="muted">Each demo shows the input text and outputs from multiple systems (Gemini, ElevenLabs, Ours, …). Replace <span class="mono">src</span> with your audio files.</p>
-
-      <!-- Demo 1 -->
-      <div class="demo" id="demo1">
-        <div class="muted">Demo 1</div>
-        <div class="prompt">“In a world of constant noise, clarity is a competitive edge. VibeVoice focuses on rhythm and phrasing to make words land.”</div>
-        <div class="audios" aria-label="Demo 1 audio comparisons">
-          <div class="audio-row">
-            <span class="badge">Gemini</span>
-            <audio controls preload="none">
-              <source src="assets/audio/demo1_gemini.mp3" type="audio/mpeg" />
-              <source src="assets/audio/demo1_gemini.ogg" type="audio/ogg" />
-              Your browser does not support the audio element.
-            </audio>
-          </div>
-          <div class="audio-row">
-            <span class="badge">ElevenLabs</span>
-            <audio controls preload="none">
-              <source src="assets/audio/demo1_elevenlabs.mp3" type="audio/mpeg" />
-              <source src="assets/audio/demo1_elevenlabs.ogg" type="audio/ogg" />
-            </audio>
-          </div>
-          <div class="audio-row">
-            <span class="badge">Ours (VibeVoice)</span>
-            <audio controls preload="none">
-              <source src="assets/audio/demo1_ours.mp3" type="audio/mpeg" />
-              <source src="assets/audio/demo1_ours.ogg" type="audio/ogg" />
-            </audio>
-          </div>
-          <div class="audio-row">
-            <span class="badge">Baseline</span>
-            <audio controls preload="none">
-              <source src="assets/audio/demo1_baseline.mp3" type="audio/mpeg" />
-              <source src="assets/audio/demo1_baseline.ogg" type="audio/ogg" />
-            </audio>
-          </div>
-        </div>
-      </div>
-
-      <!-- Demo 2 -->
-      <div class="demo" id="demo2" style="margin-top:12px;">
-        <div class="muted">Demo 2</div>
-        <div class="prompt">“Numbers matter: 1.2 million users, 35% growth, and latency under 120 milliseconds—say it cleanly, confidently, and consistently.”</div>
-        <div class="audios" aria-label="Demo 2 audio comparisons">
-          <div class="audio-row">
-            <span class="badge">Gemini</span>
-            <audio controls preload="none">
-              <source src="assets/audio/demo2_gemini.mp3" type="audio/mpeg" />
-              <source src="assets/audio/demo2_gemini.ogg" type="audio/ogg" />
-            </audio>
-          </div>
-          <div class="audio-row">
-            <span class="badge">ElevenLabs</span>
-            <audio controls preload="none">
-              <source src="assets/audio/demo2_elevenlabs.mp3" type="audio/mpeg" />
-              <source src="assets/audio/demo2_elevenlabs.ogg" type="audio/ogg" />
-            </audio>
-          </div>
-          <div class="audio-row">
-            <span class="badge">Ours (VibeVoice)</span>
-            <audio controls preload="none">
-              <source src="assets/audio/demo2_ours.mp3" type="audio/mpeg" />
-              <source src="assets/audio/demo2_ours.ogg" type="audio/ogg" />
-            </audio>
-          </div>
-        </div>
-      </div>
-
-      <!-- Demo 3 -->
-      <div class="demo" id="demo3" style="margin-top:12px;">
-        <div class="muted">Demo 3</div>
-        <div class="prompt">“Hey, thanks for waiting. I pulled the latest logs—here’s what changed between the two builds and why the patch matters.”</div>
-        <div class="audios" aria-label="Demo 3 audio comparisons">
-          <div class="audio-row">
-            <span class="badge">Gemini</span>
-            <audio controls preload="none">
-              <source src="assets/audio/demo3_gemini.mp3" type="audio/mpeg" />
-              <source src="assets/audio/demo3_gemini.ogg" type="audio/ogg" />
-            </audio>
-          </div>
-          <div class="audio-row">
-            <span class="badge">ElevenLabs</span>
-            <audio controls preload="none">
-              <source src="assets/audio/demo3_elevenlabs.mp3" type="audio/mpeg" />
-              <source src="assets/audio/demo3_elevenlabs.ogg" type="audio/ogg" />
-            </audio>
-          </div>
-          <div class="audio-row">
-            <span class="badge">Ours (VibeVoice)</span>
-            <audio controls preload="none">
-              <source src="assets/audio/demo3_ours.mp3" type="audio/mpeg" />
-              <source src="assets/audio/demo3_ours.ogg" type="audio/ogg" />
-            </audio>
-          </div>
-        </div>
-      </div>
-
-      <!-- Demo 4 -->
-      <div class="demo" id="demo4" style="margin-top:12px;">
-        <div class="muted">Demo 4</div>
-        <div class="prompt">“午夜电台的下一首，是一段缓慢升温的节拍。闭上眼睛，呼吸，和你的心跳对齐。”</div>
-        <div class="audios" aria-label="Demo 4 audio comparisons">
-          <div class="audio-row">
-            <span class="badge">Gemini</span>
-            <audio controls preload="none">
-              <source src="assets/audio/demo4_gemini.mp3" type="audio/mpeg" />
-              <source src="assets/audio/demo4_gemini.ogg" type="audio/ogg" />
-            </audio>
-          </div>
-          <div class="audio-row">
-            <span class="badge">ElevenLabs</span>
-            <audio controls preload="none">
-              <source src="assets/audio/demo4_elevenlabs.mp3" type="audio/mpeg" />
-              <source src="assets/audio/demo4_elevenlabs.ogg" type="audio/ogg" />
-            </audio>
-          </div>
-          <div class="audio-row">
-            <span class="badge">Ours (VibeVoice)</span>
-            <audio controls preload="none">
-              <source src="assets/audio/demo4_ours.mp3" type="audio/mpeg" />
-              <source src="assets/audio/demo4_ours.ogg" type="audio/ogg" />
-            </audio>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- BibTeX -->
-    <section id="bib" class="card" style="margin-top:16px;">
-      <h2>BibTeX</h2>
-      <pre class="mono" style="white-space: pre-wrap; user-select: all;">@article{vibevoice2025,
+    <div class="card">
+      <header>
+        <h1 >VibeVoice</h1>
+        <p class="muted">Generating long-form, multi-speaker conversational audio like podcasts poses
+significant challenges for traditional Text-to-Speech (TTS) systems, particularly
+in scalability, speaker consistency, and natural turn-taking. This report presents
+VIBEVOICE, a novel model designed to synthesize long-form speech with multiple
+speakers by employing the next-token diffusion framework [ 1]—a unified method
+for modeling continuous data by autoregressively generating latent vectors via
+diffusion. A core component of our approach is the continuous speech tokenizers
+operating at an ultra-low frame rate of 7.5. This tokenizer effectively preserves
+audio fidelity while significantly boosting computational efficiency for processing
+long sequences. This enables VIBEVOICE to synthesize long-form speech for up
+to 90 minutes (in a 64K context window length) with up to 4 speakers, capturing
+the authentic conversational "vibe" and surpassing all known open-source and
+closed-source dialogue models (e.g., Gemini 2.5 Pro Preview TTS). Code and
+checkpoint are available now.</p>
+      </header>
+      <!-- <div class="scroll"> -->
+        <!-- <section class="card" style="height:auto;">
+          <h2>Abstract</h2>
+          <p class="muted">Replace with your abstract …</p>
+        </section> -->
+        <!-- <section class="card" style="height:auto;"> -->
+          <!-- <h2>Figure 1</h2> -->
+          <figure>
+            <img src="./assets/vibevoice-model.jpg" alt="VibeVoice teaser/system overview">
+            <figcaption><b>Fig.1</b> System overview / teaser.</figcaption>
+          </figure>
+        <!-- </section> -->
+        <!-- <section class="card" style="height:auto;"> -->
+          <!-- <h2>BibTeX</h2>
+<pre style="white-space:pre-wrap; user-select:all;">@article{vibevoice2025,
   title   = {VibeVoice: Expressive and Robust Text-to-Speech},
-  author  = {Chang, Yaoyao and Others},
+  author  = {authors},
   journal = {ArXiv},
   year    = {2025},
   url     = {https://yaoyaochang.github.io/vibevoice/}
-}</pre>
-    </section>
-
-    <footer id="contact">
-      <span>© 2025 VibeVoice</span>
-      <span>
-        <a href="https://github.com/YaoyaoChang/vibevoice" target="_blank" rel="noopener">GitHub Repo</a> ·
-        <a href="#demos">Back to Demos</a>
-      </span>
-    </footer>
+}</pre> -->
+          <!-- <footer>
+            <span>© 2025 VibeVoice</span>
+            <span><a href="#demo1">Go to Demo 1</a></span>
+          </footer> -->
+        <!-- </section> -->
+      <!-- </div> -->
+    </div>
   </div>
+</section>
 
-  <!-- (Optional) Only one audio plays at a time -->
-  <script>
-    const players = Array.from(document.querySelectorAll('audio'));
-    players.forEach(p => p.addEventListener('play', () => {
-      players.forEach(o => { if (o !== p) o.pause(); });
-    }));
-  </script>
+<!-- Page 2: Demo 1 -->
+<section class="page" id="demo1" data-title="Demo 1">
+  <div class="wrap">
+    <div class="card">
+      <h2>Demo 1</h2>
+      <div class="sync-grid">
+        <section style="min-height:0;">
+          <audio id="audio-demo1" controls preload="metadata">
+            <source src="assets/audio/demo1_ours.mp3" type="audio/mpeg">
+          </audio>
+          <div class="meta"><span id="now-demo1">00:00.000</span></div>
+          <div class="controls"><button id="prev-demo1">⟵ Prev</button><button id="next-demo1">Next ⟶</button><button id="copy-demo1">Copy TS</button></div>
+          <div class="search"><input id="q-demo1" placeholder="搜索文本…"><button id="find-demo1">Find</button></div>
+        </section>
+        <section style="min-height:0;">
+          <div class="transcript" id="trans-demo1"></div>
+        </section>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Page 3: Demo 2 -->
+<section class="page" id="demo2" data-title="Demo 2">
+  <div class="wrap">
+    <div class="card">
+      <h2>Demo 2</h2>
+      <div class="sync-grid">
+        <section style="min-height:0;">
+          <audio id="audio-demo2" controls preload="metadata">
+            <source src="assets/audio/demo2_ours.mp3" type="audio/mpeg">
+          </audio>
+          <div class="meta"><span id="now-demo2">00:00.000</span></div>
+          <div class="controls"><button id="prev-demo2">⟵ Prev</button><button id="next-demo2">Next ⟶</button><button id="copy-demo2">Copy TS</button></div>
+          <div class="search"><input id="q-demo2" placeholder="搜索文本…"><button id="find-demo2">Find</button></div>
+        </section>
+        <section style="min-height:0;">
+          <div class="transcript" id="trans-demo2"></div>
+        </section>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Page 4: Demo 3（长音频） -->
+<section class="page" id="demo3" data-title="Demo 3">
+  <div class="wrap">
+    <div class="card">
+      <h2>Demo 3 — Long-form</h2>
+      <div class="sync-grid">
+        <section style="min-height:0;">
+          <audio id="audio-demo3" controls preload="metadata">
+            <source src="./assets/audio/long_demo3_ours.wav" type="audio/mpeg">
+          </audio>
+          <div class="meta"><span id="now-demo3">00:00.000</span></div>
+          <div class="controls"><button id="prev-demo3">⟵ Prev</button><button id="next-demo3">Next ⟶</button><button id="copy-demo3">Copy TS</button></div>
+          <div class="search"><input id="q-demo3" placeholder="搜索文本…"><button id="find-demo3">Find</button></div>
+        </section>
+        <section style="min-height:0;">
+          <div class="transcript" id="trans-demo3"></div>
+        </section>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Page 5: Demo 4 -->
+<section class="page" id="demo4" data-title="Demo 4">
+  <div class="wrap">
+    <div class="card">
+      <h2>Demo 4</h2>
+      <div class="sync-grid">
+        <section style="min-height:0;">
+          <audio id="audio-demo4" controls preload="metadata">
+            <source src="assets/audio/demo4_ours.mp3" type="audio/mpeg">
+          </audio>
+          <div class="meta"><span id="now-demo4">00:00.000</span></div>
+          <div class="controls"><button id="prev-demo4">⟵ Prev</button><button id="next-demo4">Next ⟶</button><button id="copy-demo4">Copy TS</button></div>
+          <div class="search"><input id="q-demo4" placeholder="搜索文本…"><button id="find-demo4">Find</button></div>
+        </section>
+        <section style="min-height:0;">
+          <div class="transcript" id="trans-demo4"></div>
+        </section>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 导航点 & 分页脚本 + 同步播放器 -->
+<script>
+/* ---- 分页：滚轮/键盘 + 右侧圆点 ---- */
+const pages = Array.from(document.querySelectorAll('section.page'));
+const dotsBox = document.getElementById('dots');
+let pageIdx = 0, lockUntil = 0;
+const LOCK_MS = 550;
+const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const scrollOpts = { behavior: prefersReduced ? 'auto' : 'smooth', block:'start' };
+
+pages.forEach((sec,i)=>{ const d=document.createElement('div'); d.className='dot'+(i===0?' active':''); d.title=sec.dataset.title||`Page ${i+1}`; d.onclick=()=>goTo(i); dotsBox.appendChild(d); });
+function updateDots(i){ Array.from(dotsBox.children).forEach((el,j)=>el.classList.toggle('active', j===i)); }
+function goTo(i){ i=Math.max(0,Math.min(pages.length-1,i)); pageIdx=i; pages[i].scrollIntoView(scrollOpts); updateDots(i); history.replaceState(null,'','#'+(pages[i].id||('p'+(i+1)))); }
+
+let ioReady=false;
+const io=new IntersectionObserver((ents)=>{ let best={idx:pageIdx,ratio:0}; ents.forEach(e=>{ const i=pages.indexOf(e.target); if(e.intersectionRatio>best.ratio) best={idx:i,ratio:e.intersectionRatio}; }); if(ioReady){ pageIdx=best.idx; updateDots(pageIdx);} },{threshold:[0,.25,.5,.75,1]});
+pages.forEach(s=>io.observe(s)); setTimeout(()=>ioReady=true,200);
+
+document.addEventListener('keydown',(e)=>{
+  const now=Date.now();
+  const tag=(document.activeElement?.tagName||'').toLowerCase();
+  if(tag==='input'||tag==='textarea') return;
+  if(now<lockUntil) return;
+  if(['ArrowDown','PageDown',' '].includes(e.key)){ e.preventDefault(); lockUntil=now+LOCK_MS; goTo(pageIdx+1); }
+  else if(['ArrowUp','PageUp'].includes(e.key)){ e.preventDefault(); lockUntil=now+LOCK_MS; goTo(pageIdx-1); }
+  else if(e.key==='Home'){ e.preventDefault(); goTo(0); }
+  else if(e.key==='End'){ e.preventDefault(); goTo(pages.length-1); }
+},{passive:false});
+
+let wheelAccum=0, wheelTimer=null;
+window.addEventListener('wheel',(e)=>{
+  const now=Date.now(); if(now<lockUntil) return;
+  if(e.target.closest('audio') || e.target.closest('.transcript')) return; // 不劫持内部滚动
+  wheelAccum += e.deltaY; clearTimeout(wheelTimer);
+  wheelTimer=setTimeout(()=>{ if(Math.abs(wheelAccum)<5){wheelAccum=0;return;} lockUntil=Date.now()+LOCK_MS; goTo(pageIdx + (wheelAccum>0?1:-1)); wheelAccum=0; },80);
+},{passive:true});
+
+addEventListener('load',()=>{ const id=location.hash.slice(1); const i=id?pages.findIndex(s=>s.id===id):0; goTo(i>=0?i:0); });
+
+/* ---- 全局互斥播放 ---- */
+const allAudios = Array.from(document.querySelectorAll('audio'));
+allAudios.forEach(p=>p.addEventListener('play',()=>{ allAudios.forEach(o=>{ if(o!==p) o.pause(); }); }));
+
+/* ---- 对齐播放器封装 ---- */
+function mmssms(t){ const m=Math.floor(t/60), s=Math.floor(t%60), ms=Math.floor((t-Math.floor(t))*1000); return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(ms).padStart(3,'0')}`; }
+class SyncPlayer{
+  constructor(key,segs){
+    this.audio = document.getElementById(`audio-${key}`);
+    this.nowEl = document.getElementById(`now-${key}`);
+    this.transEl= document.getElementById(`trans-${key}`);
+    this.ctrl = {
+      prev: document.getElementById(`prev-${key}`),
+      next: document.getElementById(`next-${key}`),
+      copy: document.getElementById(`copy-${key}`),
+      q:    document.getElementById(`q-${key}`),
+      find: document.getElementById(`find-${key}`)
+    };
+    this.idx=-1;
+    this.segments=segs.slice().sort((a,b)=>a.start-b.start);
+    for(let i=0;i<this.segments.length;i++){ const cur=this.segments[i], nxt=this.segments[i+1]; if(cur.end==null) cur.end = nxt? nxt.start : Infinity; }
+    this.render(); this.bind();
+  }
+  esc(s){ return s.replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+  render(){ this.transEl.innerHTML=''; this.segments.forEach((seg,i)=>{ const d=document.createElement('div'); d.className='line'; d.dataset.idx=i; d.innerHTML=`<div class="ts">${mmssms(seg.start)}</div><div class="txt">${this.esc(seg.text)}</div>`; d.onclick=()=>this.seek(seg.start,true); this.transEl.appendChild(d); }); }
+  seek(t,autoplay=false){ this.audio.currentTime=Math.max(0,t); if(autoplay) this.audio.play().catch(()=>{}); }
+  findIdx(t){ let lo=0,hi=this.segments.length-1,ans=-1; while(lo<=hi){ const mid=(lo+hi)>>1, seg=this.segments[mid]; if(t<seg.start) hi=mid-1; else if(t>=seg.end) lo=mid+1; else {ans=mid;break;} } return ans; }
+  setActive(i,scroll=true){ if(i===this.idx) return; const prev=this.idx>=0?this.transEl.querySelector(`.line[data-idx="${this.idx}"]`):null; const next=i>=0?this.transEl.querySelector(`.line[data-idx="${i}"]`):null; if(prev) prev.classList.remove('active'); if(next){ next.classList.add('active'); if(scroll){ const top=next.offsetTop - this.transEl.clientHeight/2 + next.clientHeight/2; this.transEl.scrollTo({top,behavior:'smooth'}); } } this.idx=i; }
+  onTime(){ const t=this.audio.currentTime; if(this.nowEl) this.nowEl.textContent=mmssms(t); this.setActive(this.findIdx(t),true); }
+  jump(d){ let i=this.idx; if(i<0) i=d>0?0:this.segments.length-1; else i=Math.min(Math.max(0,i+d),this.segments.length-1); this.seek(this.segments[i].start,true); }
+  copy(){ navigator.clipboard?.writeText?.(mmssms(this.audio.currentTime)); }
+  find(q){ if(!q) return; const i=this.segments.findIndex(s=>s.text.toLowerCase().includes(q.toLowerCase())); if(i>=0) this.seek(this.segments[i].start,true); }
+  bind(){
+    const t=()=>this.onTime();
+    this.audio.addEventListener('timeupdate',t);
+    this.audio.addEventListener('seeked',t);
+    this.audio.addEventListener('play',t);
+    this.audio.addEventListener('loadedmetadata',()=>{ const dur=isFinite(this.audio.duration)?this.audio.duration:Infinity; for(let i=0;i<this.segments.length;i++){ if(this.segments[i].end===Infinity) this.segments[i].end=dur; }});
+    this.ctrl.prev && (this.ctrl.prev.onclick=()=>this.jump(-1));
+    this.ctrl.next && (this.ctrl.next.onclick=()=>this.jump(1));
+    this.ctrl.copy && (this.ctrl.copy.onclick=()=>this.copy());
+    if(this.ctrl.q && this.ctrl.find){
+      this.ctrl.find.onclick=()=>this.find(this.ctrl.q.value.trim());
+      this.ctrl.q.addEventListener('keydown',e=>{ if(e.key==='Enter') this.find(e.currentTarget.value.trim()); });
+    }
+  }
+}
+
+/* ---- 示例时间戳（请替换为真实数据） ---- */
+const segmentsDemo1=[{start:0,text:"In a world of constant noise, clarity is a competitive edge."},{start:3.2,text:"VibeVoice focuses on rhythm and phrasing to make words land."},{start:7.85,text:"Numbers matter: 1.2M users, 35% growth, sub-120 ms."},{start:12.4,text:"Say it cleanly, confidently, and consistently."}];
+const segmentsDemo2=[{start:0,text:"Welcome to the metrics rundown."},{start:2.8,text:"Throughput rose steadily across releases."},{start:6.1,text:"Latency stayed under 120 ms in stress tests."},{start:9.6,text:"That's reliability teams can plan around."}];
+const segmentsDemo3=[{start:0,text:"In long-form narration, pacing needs to breathe."},{start:4.2,text:"VibeVoice keeps timbre and rhythm over minutes."},{start:10,text:"Even with noisy punctuation, prosody remains stable."},{start:16,text:"Real tracks can run for tens of minutes."}];
+const segmentsDemo4=[{start:0,text:"午夜电台，下一首缓慢升温的节拍。"},{start:3.6,text:"闭上眼睛，跟随鼓点，让心跳对齐。"},{start:7.5,text:"在停顿里，情绪自然上扬。"},{start:12,text:"让我们继续。"}];
+
+function atTop(el){ return el.scrollTop <= 0; }
+function atBottom(el){ return Math.ceil(el.scrollTop + el.clientHeight) >= el.scrollHeight; }
+
+function pageLockThen(delta){
+  if (Date.now() < lockUntil) return;
+  lockUntil = Date.now() + LOCK_MS;
+  goTo(pageIdx + delta);
+}
+
+// 1) 鼠标滚轮 / 触控板：在边界处改为翻页
+document.querySelectorAll('.transcript').forEach(el => {
+  el.addEventListener('wheel', (e) => {
+    // 允许在内部滚动；只有到边界且继续滚，才翻页
+    const dirDown = e.deltaY > 0;
+    if ((dirDown && atBottom(el)) || (!dirDown && atTop(el))) {
+      e.preventDefault();  // 阻止内部滚动继续触发
+      pageLockThen(dirDown ? +1 : -1);
+    }
+  }, { passive: false });
+});
+
+// 2) 键盘：当焦点在转写框内时，PageUp/Down、↑/↓、空格到边界翻页
+document.querySelectorAll('.transcript').forEach(el => {
+  el.addEventListener('keydown', (e) => {
+    const keysNext = ['ArrowDown','PageDown',' '];
+    const keysPrev = ['ArrowUp','PageUp'];
+    if (keysNext.includes(e.key) && atBottom(el)) {
+      e.preventDefault(); pageLockThen(+1);
+    } else if (keysPrev.includes(e.key) && atTop(el)) {
+      e.preventDefault(); pageLockThen(-1);
+    }
+  });
+});
+
+// 3) 触摸：在转写框内上/下滑，边界时翻页（移动端）
+document.querySelectorAll('.transcript').forEach(el => {
+  let startY = null;
+  el.addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; }, { passive: true });
+  el.addEventListener('touchend', (e) => {
+    if (startY == null) return;
+    const dy = e.changedTouches[0].clientY - startY;
+    startY = null;
+    const TH = 40; // 手势阈值，像素
+    if (Math.abs(dy) < TH) return;
+    const dirDown = dy < 0; // 上滑=内容向上=down
+    if ((dirDown && atBottom(el)) || (!dirDown && atTop(el))) {
+      pageLockThen(dirDown ? +1 : -1);
+    }
+  }, { passive: true });
+});
+
+/* ---- 实例化四个对齐播放器 ---- */
+new SyncPlayer('demo1', segmentsDemo1);
+new SyncPlayer('demo2', segmentsDemo2);
+new SyncPlayer('demo3', segmentsDemo3);
+new SyncPlayer('demo4', segmentsDemo4);
+</script>
 </body>
 </html>
