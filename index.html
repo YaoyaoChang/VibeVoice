@@ -54,8 +54,15 @@
 
   .scroll { overflow:auto; min-height:0; flex:1; display:grid; gap:16px; }
 
-  .sync-grid { display:grid; grid-template-columns:1fr; gap:16px; min-height:0; flex:1; }
-  
+  .sync-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;        /* 上：audio  自然高度；下：transcript 占剩余 */
+    row-gap: var(--sgap, 16px);          /* “audio-文本”的间隙 */
+    padding-block: var(--sgap, 16px);    /* “顶部-audio”、“文本-底部”的间隙，等于中间 */
+    min-height: 0;
+    flex: 1;
+  }
   audio { width:100%; }
   .meta { color:var(--muted); font-size:14px; }
   .controls { display:flex; gap:8px; flex-wrap:wrap; }
@@ -150,6 +157,7 @@ checkpoint are available now.</p>
   <div class="wrap">
     <div class="card">
       <h2>Demo 1</h2>
+      <p> 4 speakers, 90 min, generated at once</p>
       <div class="sync-grid">
         <section style="min-height:0;">
           <audio id="audio-demo1" controls preload="metadata">
@@ -172,6 +180,7 @@ checkpoint are available now.</p>
   <div class="wrap">
     <div class="card">
       <h2>Demo 2</h2>
+      <p>Automatic BGM in the first 48 seconds of the opening remarks, no explicit prompt provided</p>
       <div class="sync-grid">
         <section style="min-height:0;">
           <audio id="audio-demo2" controls preload="metadata">
@@ -190,7 +199,8 @@ checkpoint are available now.</p>
 <section class="page" id="demo3" data-title="Demo 3">
   <div class="wrap">
     <div class="card">
-      <h2>Demo 3 — Long-form</h2>
+      <h2>Demo 3</h2>
+      <p>Cross-lingual — the woman’s prompt is in English, but her speech is generated in Chinese.</p>
       <div class="sync-grid">
         <section style="min-height:0;">
           <audio id="audio-demo3" controls preload="metadata">
@@ -210,6 +220,7 @@ checkpoint are available now.</p>
   <div class="wrap">
     <div class="card">
       <h2>Demo 4</h2>
+      <p> Emergent singing capability, though not explicitly trained on music</p>
       <div class="sync-grid">
         <section style="min-height:0;">
           <audio id="audio-demo4" controls preload="metadata">
