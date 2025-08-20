@@ -55,7 +55,7 @@
   .scroll { overflow:auto; min-height:0; flex:1; display:grid; gap:16px; }
 
   .sync-grid { display:grid; grid-template-columns:1fr; gap:16px; min-height:0; flex:1; }
-  @media (min-width:980px){ .sync-grid { grid-template-columns:0.9fr 1.1fr; } }
+  
   audio { width:100%; }
   .meta { color:var(--muted); font-size:14px; }
   .controls { display:flex; gap:8px; flex-wrap:wrap; }
@@ -153,11 +153,11 @@ checkpoint are available now.</p>
       <div class="sync-grid">
         <section style="min-height:0;">
           <audio id="audio-demo1" controls preload="metadata">
-            <source src="assets/audio/demo1_ours.mp3" type="audio/mpeg">
+            <source src="assets/audio/1.5b_4p_90min.mp3" type="audio/mpeg">
           </audio>
-          <div class="meta"><span id="now-demo1">00:00.000</span></div>
-          <div class="controls"><button id="prev-demo1">⟵ Prev</button><button id="next-demo1">Next ⟶</button><button id="copy-demo1">Copy TS</button></div>
-          <div class="search"><input id="q-demo1" placeholder="搜索文本…"><button id="find-demo1">Find</button></div>
+          <!-- <div class="meta"><span id="now-demo1">00:00.000</span></div> -->
+          <!-- <div class="controls"><button id="prev-demo1">⟵ Prev</button><button id="next-demo1">Next ⟶</button><button id="copy-demo1">Copy TS</button></div> -->
+          <!-- <div class="search"><input id="q-demo1" placeholder="搜索文本…"><button id="find-demo1">Find</button></div> -->
         </section>
         <section style="min-height:0;">
           <div class="transcript" id="trans-demo1"></div>
@@ -175,11 +175,8 @@ checkpoint are available now.</p>
       <div class="sync-grid">
         <section style="min-height:0;">
           <audio id="audio-demo2" controls preload="metadata">
-            <source src="assets/audio/demo2_ours.mp3" type="audio/mpeg">
+            <source src="assets/audio/gpt5_topic_12min.mp3" type="audio/mpeg">
           </audio>
-          <div class="meta"><span id="now-demo2">00:00.000</span></div>
-          <div class="controls"><button id="prev-demo2">⟵ Prev</button><button id="next-demo2">Next ⟶</button><button id="copy-demo2">Copy TS</button></div>
-          <div class="search"><input id="q-demo2" placeholder="搜索文本…"><button id="find-demo2">Find</button></div>
         </section>
         <section style="min-height:0;">
           <div class="transcript" id="trans-demo2"></div>
@@ -197,11 +194,8 @@ checkpoint are available now.</p>
       <div class="sync-grid">
         <section style="min-height:0;">
           <audio id="audio-demo3" controls preload="metadata">
-            <source src="./assets/audio/long_demo3_ours.wav" type="audio/mpeg">
+            <source src="./assets/audio/chinese_demo.mp3" type="audio/mpeg">
           </audio>
-          <div class="meta"><span id="now-demo3">00:00.000</span></div>
-          <div class="controls"><button id="prev-demo3">⟵ Prev</button><button id="next-demo3">Next ⟶</button><button id="copy-demo3">Copy TS</button></div>
-          <div class="search"><input id="q-demo3" placeholder="搜索文本…"><button id="find-demo3">Find</button></div>
         </section>
         <section style="min-height:0;">
           <div class="transcript" id="trans-demo3"></div>
@@ -219,11 +213,8 @@ checkpoint are available now.</p>
       <div class="sync-grid">
         <section style="min-height:0;">
           <audio id="audio-demo4" controls preload="metadata">
-            <source src="assets/audio/demo4_ours.mp3" type="audio/mpeg">
+            <source src="assets/audio/see you again ours.mp3" type="audio/mpeg">
           </audio>
-          <div class="meta"><span id="now-demo4">00:00.000</span></div>
-          <div class="controls"><button id="prev-demo4">⟵ Prev</button><button id="next-demo4">Next ⟶</button><button id="copy-demo4">Copy TS</button></div>
-          <div class="search"><input id="q-demo4" placeholder="搜索文本…"><button id="find-demo4">Find</button></div>
         </section>
         <section style="min-height:0;">
           <div class="transcript" id="trans-demo4"></div>
@@ -293,17 +284,39 @@ class SyncPlayer{
     this.idx=-1;
     this.segments=segs.slice().sort((a,b)=>a.start-b.start);
     for(let i=0;i<this.segments.length;i++){ const cur=this.segments[i], nxt=this.segments[i+1]; if(cur.end==null) cur.end = nxt? nxt.start : Infinity; }
+    this.shouldScroll = false; // 仅在用户主动跳转时滚动
     this.render(); this.bind();
   }
   esc(s){ return s.replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
-  render(){ this.transEl.innerHTML=''; this.segments.forEach((seg,i)=>{ const d=document.createElement('div'); d.className='line'; d.dataset.idx=i; d.innerHTML=`<div class="ts">${mmssms(seg.start)}</div><div class="txt">${this.esc(seg.text)}</div>`; d.onclick=()=>this.seek(seg.start,true); this.transEl.appendChild(d); }); }
-  seek(t,autoplay=false){ this.audio.currentTime=Math.max(0,t); if(autoplay) this.audio.play().catch(()=>{}); }
+  render(){ this.transEl.innerHTML=''; this.segments.forEach((seg,i)=>{ const d=document.createElement('div'); d.className='line'; d.dataset.idx=i; d.innerHTML=`<div class="ts">${mmssms(seg.start)}</div><div class="txt">${this.esc(seg.text)}</div>`; d.onclick=()=>this.seek(seg.start,true,true); this.transEl.appendChild(d); }); }
+  seek(t,autoplay=false, scroll=false){ this.shouldScroll = !!scroll; this.audio.currentTime=Math.max(0,t); if(autoplay) this.audio.play().catch(()=>{}); }
   findIdx(t){ let lo=0,hi=this.segments.length-1,ans=-1; while(lo<=hi){ const mid=(lo+hi)>>1, seg=this.segments[mid]; if(t<seg.start) hi=mid-1; else if(t>=seg.end) lo=mid+1; else {ans=mid;break;} } return ans; }
-  setActive(i,scroll=true){ if(i===this.idx) return; const prev=this.idx>=0?this.transEl.querySelector(`.line[data-idx="${this.idx}"]`):null; const next=i>=0?this.transEl.querySelector(`.line[data-idx="${i}"]`):null; if(prev) prev.classList.remove('active'); if(next){ next.classList.add('active'); if(scroll){ const top=next.offsetTop - this.transEl.clientHeight/2 + next.clientHeight/2; this.transEl.scrollTo({top,behavior:'smooth'}); } } this.idx=i; }
-  onTime(){ const t=this.audio.currentTime; if(this.nowEl) this.nowEl.textContent=mmssms(t); this.setActive(this.findIdx(t),true); }
-  jump(d){ let i=this.idx; if(i<0) i=d>0?0:this.segments.length-1; else i=Math.min(Math.max(0,i+d),this.segments.length-1); this.seek(this.segments[i].start,true); }
+  setActive(i, scroll = true) {
+    if (i === this.idx) return;
+    const prev = this.idx >= 0 ? this.transEl.querySelector(`.line[data-idx="${this.idx}"]`) : null;
+    const next = i >= 0 ? this.transEl.querySelector(`.line[data-idx="${i}"]`) : null;
+    if (prev) prev.classList.remove('active');
+    if (next) {
+      next.classList.add('active');
+      if (scroll) {
+        // 以 transEl 为参考的相对位置
+        const container = this.transEl;
+        const nextTopRel = next.offsetTop - container.offsetTop;
+        let top = nextTopRel - (container.clientHeight - next.clientHeight) / 2;
+
+        // 关键：夹紧到 [0, 最大可滚高度]
+        const maxTop = container.scrollHeight - container.clientHeight;
+        top = Math.max(0, Math.min(top, maxTop));
+
+        container.scrollTo({ top, behavior: 'smooth' });
+      }
+    }
+    this.idx = i;
+  }
+  onTime(){ const t=this.audio.currentTime; if(this.nowEl) this.nowEl.textContent=mmssms(t); const i=this.findIdx(t); this.setActive(i,this.shouldScroll); if(this.shouldScroll) this.shouldScroll=false; }
+  jump(d){ let i=this.idx; if(i<0) i=d>0?0:this.segments.length-1; else i=Math.min(Math.max(0,i+d),this.segments.length-1); this.seek(this.segments[i].start,true,true); }
   copy(){ navigator.clipboard?.writeText?.(mmssms(this.audio.currentTime)); }
-  find(q){ if(!q) return; const i=this.segments.findIndex(s=>s.text.toLowerCase().includes(q.toLowerCase())); if(i>=0) this.seek(this.segments[i].start,true); }
+  find(q){ if(!q) return; const i=this.segments.findIndex(s=>s.text.toLowerCase().includes(q.toLowerCase())); if(i>=0) this.seek(this.segments[i].start,true,true); }
   bind(){
     const t=()=>this.onTime();
     this.audio.addEventListener('timeupdate',t);
@@ -321,7 +334,24 @@ class SyncPlayer{
 }
 
 /* ---- 示例时间戳（请替换为真实数据） ---- */
-const segmentsDemo1=[{start:0,text:"In a world of constant noise, clarity is a competitive edge."},{start:3.2,text:"VibeVoice focuses on rhythm and phrasing to make words land."},{start:7.85,text:"Numbers matter: 1.2M users, 35% growth, sub-120 ms."},{start:12.4,text:"Say it cleanly, confidently, and consistently."}];
+const segmentsDemo1 = [
+  { start: 0, text: "Alright, welcome back everyone to the podcast. Today, we're diving deeper into Artificial Intelligence with Bill Gates, Satya Nadella, and Kevin Scott from Microsoft." },
+  { start: 6.5, text: "Bill Gates: The pace of AI innovation is exhilarating. It's not just automation anymore, it's augmentation—a co-pilot for intellectual tasks." },
+  { start: 12.4, text: "Satya Nadella: Our mission is to empower every person and organization. Partnering with OpenAI lets us democratize AI, integrating Copilot into Word, Excel, Bing, and GitHub." },
+  { start: 19.2, text: "Kevin Scott: The challenge is scale. Training GPT-4 required world-class supercomputers in Azure. The breakthrough is weaving AI seamlessly into user experiences like Copilot." },
+  { start: 26.7, text: "Bill Gates: AI is a monumental leap in productivity, freeing people from repetitive tasks to focus on creativity, strategy, and learning." },
+  { start: 32.5, text: "Satya Nadella: AI’s impact goes beyond work—it transforms accessibility, healthcare, education, and sustainability, from Seeing AI to AI for Earth." },
+  { start: 39.8, text: "Kevin Scott: Responsible AI is paramount. We focus on fairness, transparency, accountability, and building trust with security, red-teaming, and oversight." },
+  { start: 47.0, text: "Bill Gates: The future is personalized, proactive AI assistants and multimodal agents. Microsoft is positioned to deliver these responsibly at scale." },
+  { start: 53.2, text: "Satya Nadella: Our strategy is innovation, integration, developer empowerment, and responsible AI—driving AI into every Microsoft product and platform." },
+  { start: 59.1, text: "Kevin Scott: Beyond LLMs, we’re exploring multimodal AI, edge AI, reinforcement learning, and AI for scientific discovery." },
+  { start: 65.4, text: "Bill Gates: To individuals, my advice is embrace AI, experiment with it, and focus on uniquely human skills like creativity and empathy." },
+  { start: 71.6, text: "Satya Nadella: For businesses—start small, think big. Identify pain points, deploy Copilot, and cultivate AI literacy responsibly." },
+  { start: 77.8, text: "Kevin Scott: For students—learn ML fundamentals, ethics, and human-computer interaction. Be curious and interdisciplinary." },
+  { start: 83.2, text: "Bill Gates: AI’s long-term impact is profound. It can cure disease, fight climate change, and transform education. Microsoft’s role is to be a trusted partner." },
+  { start: 90.1, text: "Satya Nadella: Leadership in AI means shaping a society where benefits are broad and equitable. It’s about human outcomes, not just technology." },
+  { start: 96.5, text: "Kevin Scott: For builders, this is the most exciting time in computer science. We must build AI with craftsmanship, ambition, and humility." }
+];
 const segmentsDemo2=[{start:0,text:"Welcome to the metrics rundown."},{start:2.8,text:"Throughput rose steadily across releases."},{start:6.1,text:"Latency stayed under 120 ms in stress tests."},{start:9.6,text:"That's reliability teams can plan around."}];
 const segmentsDemo3=[{start:0,text:"In long-form narration, pacing needs to breathe."},{start:4.2,text:"VibeVoice keeps timbre and rhythm over minutes."},{start:10,text:"Even with noisy punctuation, prosody remains stable."},{start:16,text:"Real tracks can run for tens of minutes."}];
 const segmentsDemo4=[{start:0,text:"午夜电台，下一首缓慢升温的节拍。"},{start:3.6,text:"闭上眼睛，跟随鼓点，让心跳对齐。"},{start:7.5,text:"在停顿里，情绪自然上扬。"},{start:12,text:"让我们继续。"}];
