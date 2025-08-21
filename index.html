@@ -7,6 +7,8 @@
 <link rel="preload" as="audio" href="assets/audio/gpt5_topic_12min.mp3">
 <link rel="preload" as="audio" href="assets/audio/chinese_demo.mp3">
 <link rel="preload" as="audio" href="assets/audio/2p_see_u_again.mp3">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 <title>VibeVoice — Paged Demos with Sync</title>
 <style>
   :root {
@@ -97,6 +99,82 @@
   .links a { text-decoration: none; color: var(--accent); font-weight: 500; }
   .links a:hover { text-decoration: underline; }
   .links .sep { margin: 0 6px; color: var(--muted); }
+
+  /* Tabs */
+  .tablist { display:flex; gap:8px; flex-wrap:wrap; border-bottom:none solid var(--border); padding-bottom:8px; }
+  .tablist [role="tab"] { padding:6px 12px; border:none solid var(--border); border-radius:999px; background:#f7f7f7; cursor:pointer; }
+  .tablist [role="tab"][aria-selected="true"] { background:var(--accent); color:#fff; border-color:var(--accent); }
+
+  .tabs{
+    display:flex; flex-direction:column; gap:12px;
+    flex:1;              /* 占满卡片剩余空间 */
+    min-height:0;        /* 关键：允许子元素计算可滚动高度 */
+  }
+
+  /* 面板容器自己也要参与拉伸，否则会把内容挤出一屏 */
+  .tabpanel{
+    display:none;
+    flex:1;
+    min-height:0;
+  }
+  .tabpanel.active{
+    display:flex;          /* 让下面的 .sync-grid 当作 flex 子元素 */
+    flex-direction:column;
+    flex:1;
+    min-height:0;
+  }
+
+  /* 让内部的 sync-grid 继续撑满，并把滚动交给 transcript */
+  .tabpanel.active .sync-grid{
+    flex:1;
+    min-height:0;
+  }
+  .tabs{
+  display:flex; flex-direction:column; gap:12px;
+  flex:1; min-height:0;
+}
+
+/* 居中一排 */
+.tablist{
+  display:flex; justify-content:center; gap:12px; flex-wrap:wrap;
+  padding:6px 0; border:0;           /* 去掉下边线 */
+}
+
+/* 按钮：未选=白色，圆角药丸 */
+.tablist [role="tab"]{
+  appearance:none;
+  border:1px solid var(--border);
+  background:#fff;                    /* 未选白色 */
+  color:var(--text);
+  padding:8px 14px;
+  border-radius:999px;
+  cursor:pointer;
+  transition: background .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+
+  /* 悬停：稍深的灰 */
+  .tablist [role="tab"]:hover{
+    background:#efefef;                 /* hover 灰 */
+    border-color:#d5d5d5;
+  }
+
+  /* 选中：很淡的灰 */
+  .tablist [role="tab"][aria-selected="true"] {
+    background:#f0f0f0;   /* 稍重一点的灰 */
+    border-color:#e0e0e0;
+    color:#000;           /* 强制黑色字体 */
+  }
+
+  /* 键盘可达性：focus ring */
+  .tablist [role="tab"]:focus-visible{
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0,102,204,.25);
+  }
+
+  /* 面板维持一屏高度，内部滚动（沿用你之前的布局约束） */
+  .tabpanel{ display:none; flex:1; min-height:0; }
+  .tabpanel.active{ display:flex; flex-direction:column; flex:1; min-height:0; }
+  .tabpanel.active .sync-grid{ flex:1; min-height:0; }
 </style>
 </head>
 <body>
@@ -117,9 +195,9 @@
           <p class="links" style="text-align:center;">
             <a href="https://aka.ms/GeneralAI" target="_blank">📄 PDF</a>
             <span class="sep">·</span>
-            <a href="https://aka.ms/GeneralAI" target="_blank">💻 Code</a>
+            <a href="https://github.com/microsoft/VibeVoice" target="_blank">💻 Code</a>
             <span class="sep">·</span>
-            <a href="https://aka.ms/GeneralAI" target="_blank">📦 Checkpoint</a>
+            <a href="https://huggingface.co/microsoft/VibeVoice-1.5b" target="_blank">📦 Checkpoint</a>
           </p>
 
           <p class="muted">Generating long-form, multi-speaker conversational audio like podcasts poses
@@ -147,18 +225,46 @@ checkpoint are available now.</p>
   <div class="wrap">
     <div class="card">
       <h2>Long Audio + Multi-Speaker</h2>
-      <p>90 mins, 4 speakers, generated at once</p>
-      <div class="sync-grid">
-        <section style="min-height:0;">
-          <audio id="audio-demo1" controls preload="metadata">
-            <source src="assets/audio/1.5b_4p_90min.mp3" type="audio/mpeg">
-          </audio>
-        </section>
-        <section style="min-height:0;">
-          <div class="transcript" id="trans-demo1"></div>
-        </section>
+      <div id="tabs-demo1" class="tabs">
+        <div class="tablist" role="tablist" aria-label="Demo 1 variations">
+          <button role="tab" aria-selected="true" data-target="p-demo1-a">Case A</button>
+          <button role="tab" aria-selected="false" data-target="p-demo1-b">Case B</button>
+        </div>
+
+        <!-- 面板 A -->
+        <div id="p-demo1-a" class="tabpanel active" role="tabpanel"
+            data-key="demo1-a"
+            data-json="assets/text/1.5b_4p_90min_gt_timestamp.json">
+          <p>90 mins, 4 speakers, generated at once (Case A)</p>
+          <div class="sync-grid">
+            <section style="min-height:0;">
+              <audio id="audio-demo1-a" controls preload="metadata">
+                <source src="assets/audio/1.5b_4p_90min.mp3" type="audio/mpeg">
+              </audio>
+            </section>
+            <section style="min-height:0;">
+              <div class="transcript" id="trans-demo1-a"></div>
+            </section>
+          </div>
+        </div>
+
+        <!-- 面板 B -->
+        <div id="p-demo1-b" class="tabpanel" role="tabpanel"
+            data-key="demo1-b"
+            data-json="assets/text/1.5b_4p_90min_gt_timestamp.json">
+          <p>90 mins, 4 speakers, generated at once (Case B)</p>
+          <div class="sync-grid">
+            <section style="min-height:0;">
+              <audio id="audio-demo1-b" controls preload="metadata">
+                <source src="assets/audio/1.5b_4p_90min.mp3" type="audio/mpeg">
+              </audio>
+            </section>
+            <section style="min-height:0;">
+              <div class="transcript" id="trans-demo1-b"></div>
+            </section>
+          </div>
+        </div>
       </div>
-      <p style="font-size:0.85em; color:#888; margin-top:0.5em;">* TTS input is the above text only; timestamps are derived from the generated audio and may contain errors.</p>
     </div>
   </div>
 </section>
@@ -168,8 +274,50 @@ checkpoint are available now.</p>
   <div class="wrap">
     <div class="card">
       <h2>BGM</h2>
-      <p>Automatic BGM in the first 48 seconds of the opening remarks, no explicit prompt provided.</p>
-      <div class="sync-grid">
+      <div id="tabs-demo2" class="tabs">
+        <div class="tablist" role="tablist" aria-label="Demo 2 variations">
+          <button role="tab" aria-selected="true" data-target="p-demo2-a">Case A</button>
+          <button role="tab" aria-selected="false" data-target="p-demo2-b">Case B</button>
+        </div>
+
+        <!-- 面板 A -->
+        <div id="p-demo2-a" class="tabpanel active" role="tabpanel"
+            data-key="demo2-a"
+            data-json="assets/text/gpt5_topic_12min_gt_timestamp.json">
+          <p>Automatic BGM in the first 48 seconds of the opening remarks, no explicit prompt provided.</p>
+          <div class="sync-grid">
+            <section style="min-height:0;">
+              <audio id="audio-demo2-a" controls preload="metadata">
+                <source src="assets/audio/gpt5_topic_12min.mp3" type="audio/mpeg">
+              </audio>
+            </section>
+            <section style="min-height:0;">
+              <div class="transcript" id="trans-demo2-a"></div>
+            </section>
+          </div>
+          <p style="font-size:0.85em; color:#888; margin-top:0.5em;">* TTS input is the above text only; timestamps are derived from the generated audio and may contain errors.</p>
+        </div>
+
+        <!-- 面板 B（先复用相同音频/文本作为示例） -->
+        <div id="p-demo2-b" class="tabpanel" role="tabpanel"
+            data-key="demo2-b"
+            data-json="assets/text/gpt5_topic_12min_gt_timestamp.json">
+          <p>Automatic BGM in the first 48 seconds of the opening remarks, no explicit prompt provided.</p>
+          <div class="sync-grid">
+            <section style="min-height:0;">
+              <audio id="audio-demo2-b" controls preload="metadata">
+                <source src="assets/audio/gpt5_topic_12min.mp3" type="audio/mpeg">
+              </audio>
+            </section>
+            <section style="min-height:0;">
+              <div class="transcript" id="trans-demo2-b"></div>
+            </section>
+          </div>
+          <p style="font-size:0.85em; color:#888; margin-top:0.5em;">* TTS input is the above text only; timestamps are derived from the generated audio and may contain errors.</p>
+        </div>
+      </div>
+
+      <!-- <div class="sync-grid">
         <section style="min-height:0;">
           <audio id="audio-demo2" controls preload="metadata">
             <source src="assets/audio/gpt5_topic_12min.mp3" type="audio/mpeg">
@@ -178,7 +326,7 @@ checkpoint are available now.</p>
         <section style="min-height:0;">
           <div class="transcript" id="trans-demo2"></div>
         </section>
-      </div>
+      </div> -->
     </div>
   </div>
 </section>
@@ -188,16 +336,45 @@ checkpoint are available now.</p>
   <div class="wrap">
     <div class="card">
       <h2>Cross-lingual</h2>
-      <p>The woman’s prompt is in English, but her speech is generated in Chinese.</p>
-      <div class="sync-grid">
-        <section style="min-height:0;">
-          <audio id="audio-demo3" controls preload="metadata">
-            <source src="./assets/audio/chinese_demo.mp3" type="audio/mpeg">
-          </audio>
-        </section>
-        <section style="min-height:0;">
-          <div class="transcript" id="trans-demo3"></div>
-        </section>
+      <div id="tabs-demo3" class="tabs">
+        <div class="tablist" role="tablist" aria-label="Demo 3 variations">
+          <button role="tab" aria-selected="true" data-target="p-demo3-a">Case A</button>
+          <button role="tab" aria-selected="false" data-target="p-demo3-b">Case B</button>
+        </div>
+
+        <!-- 面板 A -->
+        <div id="p-demo3-a" class="tabpanel active" role="tabpanel"
+            data-key="demo3-a"
+            data-json="assets/text/chinese_demo_gt_timestamp.json">
+          <p>English prompt → Chinese speech (Case A)</p>
+          <div class="sync-grid">
+            <section style="min-height:0;">
+              <audio id="audio-demo3-a" controls preload="metadata">
+                <source src="assets/audio/chinese_demo.mp3" type="audio/mpeg">
+              </audio>
+            </section>
+            <section style="min-height:0;">
+              <div class="transcript" id="trans-demo3-a"></div>
+            </section>
+          </div>
+        </div>
+
+        <!-- 面板 B -->
+        <div id="p-demo3-b" class="tabpanel" role="tabpanel"
+            data-key="demo3-b"
+            data-json="assets/text/chinese_demo_gt_timestamp.json">
+          <p>English prompt → Chinese speech (Case B)</p>
+          <div class="sync-grid">
+            <section style="min-height:0;">
+              <audio id="audio-demo3-b" controls preload="metadata">
+                <source src="assets/audio/chinese_demo.mp3" type="audio/mpeg">
+              </audio>
+            </section>
+            <section style="min-height:0;">
+              <div class="transcript" id="trans-demo3-b"></div>
+            </section>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -208,16 +385,45 @@ checkpoint are available now.</p>
   <div class="wrap">
     <div class="card">
       <h2>Context-Appropriate Emotion</h2>
-      <p>Emergent singing capability, though not explicitly trained on music</p>
-      <div class="sync-grid">
-        <section style="min-height:0;">
-          <audio id="audio-demo4" controls preload="metadata">
-            <source src="assets/audio/2p_see_u_again.mp3" type="audio/mpeg">
-          </audio>
-        </section>
-        <section style="min-height:0;">
-          <div class="transcript" id="trans-demo4"></div>
-        </section>
+      <div id="tabs-demo4" class="tabs">
+        <div class="tablist" role="tablist" aria-label="Demo 4 variations">
+          <button role="tab" aria-selected="true" data-target="p-demo4-a">Case A</button>
+          <button role="tab" aria-selected="false" data-target="p-demo4-b">Case B</button>
+        </div>
+
+        <!-- 面板 A -->
+        <div id="p-demo4-a" class="tabpanel active" role="tabpanel"
+            data-key="demo4-a"
+            data-json="assets/text/2p_see_u_again_gt_timestamp.json">
+          <p>Emergent singing capability (Case A)</p>
+          <div class="sync-grid">
+            <section style="min-height:0;">
+              <audio id="audio-demo4-a" controls preload="metadata">
+                <source src="assets/audio/2p_see_u_again.mp3" type="audio/mpeg">
+              </audio>
+            </section>
+            <section style="min-height:0;">
+              <div class="transcript" id="trans-demo4-a"></div>
+            </section>
+          </div>
+        </div>
+
+        <!-- 面板 B -->
+        <div id="p-demo4-b" class="tabpanel" role="tabpanel"
+            data-key="demo4-b"
+            data-json="assets/text/2p_see_u_again_gt_timestamp.json">
+          <p>Emergent singing capability (Case B)</p>
+          <div class="sync-grid">
+            <section style="min-height:0;">
+              <audio id="audio-demo4-b" controls preload="metadata">
+                <source src="assets/audio/2p_see_u_again.mp3" type="audio/mpeg">
+              </audio>
+            </section>
+            <section style="min-height:0;">
+              <div class="transcript" id="trans-demo4-b"></div>
+            </section>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -335,12 +541,6 @@ class SyncPlayer{
   }
 }
 
-/* ---- 加载时间戳数据 ---- */
-fetch("./assets/text/1.5b_4p_90min_gt_timestamp.json").then(r=>r.json()).then(d=>{ new SyncPlayer('demo1', d); });
-fetch("./assets/text/gpt5_topic_12min_gt_timestamp.json").then(r=>r.json()).then(d=>{ new SyncPlayer('demo2', d); });
-fetch("./assets/text/chinese_demo_gt_timestamp.json").then(r=>r.json()).then(d=>{ new SyncPlayer('demo3', d); });
-fetch("./assets/text/2p_see_u_again_gt_timestamp.json").then(r=>r.json()).then(d=>{ new SyncPlayer('demo4', d); });
-
 /* ---- 边界穿透翻页（仅在达边界时） ---- */
 function atTop(el){ return el.scrollTop <= 0; }
 function atBottom(el){ return Math.ceil(el.scrollTop + el.clientHeight) >= el.scrollHeight; }
@@ -385,6 +585,46 @@ document.querySelectorAll('.transcript').forEach(el => {
     }
   }, { passive: true });
 });
+
+function initTabs(groupId){
+  const root = document.getElementById(groupId);
+  if (!root) return;
+  const tabs = root.querySelectorAll('[role="tab"]');
+  const panels = root.querySelectorAll('.tabpanel');
+
+  function select(targetId){
+    // 切换按钮
+    tabs.forEach(b => b.setAttribute('aria-selected', String(b.dataset.target === targetId)));
+    // 切换面板
+    panels.forEach(p => p.classList.toggle('active', p.id === targetId));
+
+    // 懒初始化：首次可见才加载 JSON + new SyncPlayer
+    const panel = root.querySelector('#' + targetId);
+    if (panel && !panel.dataset.inited){
+      const key  = panel.dataset.key;
+      const json = panel.dataset.json;
+      fetch(json)
+        .then(r => r.json())
+        .then(data => {
+          new SyncPlayer(key, data);
+          panel.dataset.inited = '1';
+        })
+        .catch(err => console.error(`init ${key} failed:`, err));
+    }
+  }
+
+  tabs.forEach(b => b.addEventListener('click', () => select(b.dataset.target)));
+  // 默认选中 aria-selected=true 的那个
+  const first = root.querySelector('[role="tab"][aria-selected="true"]');
+  if (first) select(first.dataset.target);
+}
+
+initTabs('tabs-demo1');
+initTabs('tabs-demo2');
+initTabs('tabs-demo3');
+initTabs('tabs-demo4');
 </script>
+
+
 </body>
 </html>
