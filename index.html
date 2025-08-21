@@ -10,14 +10,13 @@
 <title>VibeVoice — Paged Demos with Sync</title>
 <style>
   :root {
-    --bg:#ffffff;         /* 背景白色 */
-    --card:#ffffff;      /* 卡片浅灰 */
-    --muted:#555555;     /* 次级文字灰 */
-    --text:#000000;      /* 主文字黑色 */
-    --border:#dddddd;    /* 边框浅灰 */
-    --accent:#0066cc;    /* 高亮蓝 */
+    --bg:#ffffff;
+    --card:#ffffff;
+    --muted:#555555;
+    --text:#000000;
+    --border:#dddddd;
+    --accent:#0066cc;
   }
-
   * { box-sizing:border-box; }
   html, body { height:100%; margin:0; }
   body {
@@ -27,7 +26,6 @@
     scroll-snap-type:y mandatory;
     overflow-y:auto;
   }
-
   section.page {
     height:100svh;
     width:100%;
@@ -38,7 +36,6 @@
     align-items:stretch;
     padding:24px;
   }
-
   .wrap {
     max-width:1100px;
     width:min(92vw,1100px);
@@ -47,105 +44,85 @@
   }
   .card {
     background: var(--card);
-    box-shadow:none;
     display:flex; flex-direction:column; gap:14px;
     min-height:0; height:100%;
   }
-  h1 { margin:0; font-size:clamp(28px,4vw,40px); }
+  h1 { margin:0; font-size:clamp(28px,4vw,40px); text-align:center; }
   h2 { margin:0 0 6px; font-size:22px; }
   .muted { color:var(--muted); }
 
-  .scroll {
+  .scroll { /* 内部可滚容器 */
     overflow:auto;
     min-height:0;
     flex:1;
     display:grid;
     gap:16px;
-    overscroll-behavior: contain;      /* 关键：阻止滚动传到外层（防跳页） */
-    -webkit-overflow-scrolling: touch; /* iOS 惯性滚动更顺滑 */
+    overscroll-behavior: contain; /* 阻止滚动传到外层（防跳页） */
+    -webkit-overflow-scrolling: touch;
   }
   .sync-grid {
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;        /* 上：audio  自然高度；下：transcript 占剩余 */
-    row-gap: var(--sgap, 16px);          /* “audio-文本”的间隙 */
-    padding-block: var(--sgap, 16px);    /* “顶部-audio”、“文本-底部”的间隙，等于中间 */
+    grid-template-rows: auto 1fr; /* 上：audio；下：transcript */
+    row-gap: var(--sgap, 16px);
+    padding-block: var(--sgap, 16px);
     min-height: 0;
     flex: 1;
   }
   audio { width:100%; }
-  .meta { color:var(--muted); font-size:14px; }
-  .controls { display:flex; gap:8px; flex-wrap:wrap; }
-  button { background:#f1f1f1; color:var(--text); border:1px solid var(--border); padding:8px 12px; border-radius:10px; cursor:pointer; }
-  button:hover { border-color:#bbb; }
-  .search { display:flex; gap:8px; }
-  .search input { flex:1; background:#fff; color:var(--text); border:1px solid var(--border); padding:8px 10px; border-radius:10px; }
 
-  .transcript { height:100%; min-height:0; overflow:auto; padding:8px; border:1px solid var(--border); border-radius:12px; background:#fff; scroll-behavior:smooth; }
+  .transcript {
+    height:100%;
+    min-height:0;
+    overflow:auto;
+    padding:8px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:#fff;
+    scroll-behavior:smooth;
+  }
   .line { display:grid; grid-template-columns:84px 70px 1fr; gap:10px; padding:8px 10px; border-radius:10px; border:1px solid transparent; cursor:pointer; }
   .line:hover { background:#f5f5f5; border-color:#ddd; }
   .line.active { background:rgba(0,102,204,0.08); border-color:#0066cc; }
-  .ts, .spk { font-family:ui-monospace,Menlo,Consolas,monospace; color:#333; font-size:12px; align-self:center; text-align:right; opacity:.9; }
-  .ts { text-align: right; } /* 时间右对齐 */
-  .spk { text-align: left; white-space: nowrap; } /* speaker 左对齐并不换行 */
+  .ts, .spk { font-family:ui-monospace,Menlo,Consolas,monospace; color:#333; font-size:12px; align-self:center; opacity:.9; }
+  .ts { text-align: right; }
+  .spk { text-align: left; white-space: nowrap; }
   .txt { white-space:pre-wrap; }
 
   .dots { position:fixed; right:16px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:10px; z-index:20; }
   .dot { width:10px; height:10px; border-radius:999px; border:1px solid var(--border); background:#eee; cursor:pointer; }
   .dot.active { background:var(--accent); box-shadow:0 0 0 3px rgba(0,102,204,0.25); }
 
-  figure { margin:0; border-radius:14px; overflow:hidden; border:none solid var(--border); background:#fff; text-align:center; }
-  figure img { width:60%; display:inline-block; }
-  figure figcaption { font-size:14px; color:var(--muted); padding:10px 12px; border-top:none solid var(--border); }
-
   footer { color:var(--muted); font-size:13px; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; }
-  h1 { 
-    margin:0; 
-    font-size:clamp(28px,4vw,40px); 
-    text-align:center; 
-  }
-  .links a {
-    text-decoration: none;
-    color: var(--accent);
-    font-weight: 500;
-  }
-  .links a:hover {
-    text-decoration: underline;
-  }
-  .links .sep {
-    margin: 0 6px;
-    color: var(--muted);
-  }
-
+  .links a { text-decoration: none; color: var(--accent); font-weight: 500; }
+  .links a:hover { text-decoration: underline; }
+  .links .sep { margin: 0 6px; color: var(--muted); }
 </style>
 </head>
 <body>
 
-<!-- 导航点 + 提示 -->
+<!-- 右侧导航点 -->
 <div class="dots" id="dots" aria-label="page dots"></div>
-<!-- <div class="hint">滚轮 / ↑↓ 翻页 · 点击右侧圆点可跳转</div> -->
 
 <!-- Page 1: 概览（一屏，内部自滚动） -->
-<section class="page " id="overview" data-title="Overview">
+<section class="page" id="overview" data-title="Overview">
   <div class="wrap">
-    <div class="card ">
+    <div class="card">
       <div class="scroll" tabindex="0">
-      <header>
-        <h1 >VibeVoice</h1>
-        <!-- <p class="muted" style="text-align:center;">Author list</p> -->
+        <header>
+          <h1>VibeVoice</h1>
+          <p class="links" style="text-align:center;">
+            <a href="https://aka.ms/GeneralAI" target="_blank">MSRA GenAI Group</a>
+          </p>
+          <p class="links" style="text-align:center;">
+            <a href="https://aka.ms/GeneralAI" target="_blank">📄 PDF</a>
+            <span class="sep">·</span>
+            <a href="https://aka.ms/GeneralAI" target="_blank">💻 Code</a>
+            <span class="sep">·</span>
+            <a href="https://aka.ms/GeneralAI" target="_blank">📦 Checkpoint</a>
+          </p>
 
-        <p class="links" style="text-align:center;">
-          <a href="https://aka.ms/GeneralAI" target="_blank">MSRA GenAI Group</a>
-        </p>
-        <p class="links" style="text-align:center;">
-          <a href="https://aka.ms/GeneralAI" target="_blank">📄 PDF</a>
-          <span class="sep">·</span>
-          <a href="https://aka.ms/GeneralAI" target="_blank">💻 Code</a>
-          <span class="sep">·</span>
-          <a href="https://aka.ms/GeneralAI" target="_blank">📦 Checkpoint</a>
-        </p>
-
-        <p class="muted">Generating long-form, multi-speaker conversational audio like podcasts poses
+          <p class="muted">Generating long-form, multi-speaker conversational audio like podcasts poses
 significant challenges for traditional Text-to-Speech (TTS) systems, particularly
 in scalability, speaker consistency, and natural turn-taking. This report presents
 VIBEVOICE, a novel model designed to synthesize long-form speech with multiple
@@ -159,11 +136,7 @@ to 90 minutes (in a 64K context window length) with up to 4 speakers, capturing
 the authentic conversational "vibe" and surpassing all known open-source and
 closed-source dialogue models (e.g., Gemini 2.5 Pro Preview TTS). Code and
 checkpoint are available now.</p>
-      </header>
-        <!-- <figure>
-          <img src="./assets/vibevoice-model.jpg" alt="VibeVoice teaser/system overview">
-          <figcaption><b>Fig.1</b> System overview / teaser.</figcaption>
-        </figure> -->
+        </header>
       </div>
     </div>
   </div>
@@ -174,21 +147,18 @@ checkpoint are available now.</p>
   <div class="wrap">
     <div class="card">
       <h2>Long Audio + Multi-Speaker</h2>
-      <p> 90 mins, 4 speakers, generated at once</p>
+      <p>90 mins, 4 speakers, generated at once</p>
       <div class="sync-grid">
         <section style="min-height:0;">
           <audio id="audio-demo1" controls preload="metadata">
             <source src="assets/audio/1.5b_4p_90min.mp3" type="audio/mpeg">
           </audio>
-          <!-- <div class="meta"><span id="now-demo1">00:00.000</span></div> -->
-          <!-- <div class="controls"><button id="prev-demo1">⟵ Prev</button><button id="next-demo1">Next ⟶</button><button id="copy-demo1">Copy TS</button></div> -->
-          <!-- <div class="search"><input id="q-demo1" placeholder="搜索文本…"><button id="find-demo1">Find</button></div> -->
         </section>
         <section style="min-height:0;">
           <div class="transcript" id="trans-demo1"></div>
         </section>
       </div>
-      <p style="font-size:0.85em; color:#888; margin-top:0.5em;">  * TTS input is the above text only; timestamps are derived from the generated audio and may contain errors.</p>
+      <p style="font-size:0.85em; color:#888; margin-top:0.5em;">* TTS input is the above text only; timestamps are derived from the generated audio and may contain errors.</p>
     </div>
   </div>
 </section>
@@ -213,7 +183,7 @@ checkpoint are available now.</p>
   </div>
 </section>
 
-<!-- Page 4: Demo 3（长音频） -->
+<!-- Page 4: Demo 3 -->
 <section class="page" id="demo3" data-title="Demo 3">
   <div class="wrap">
     <div class="card">
@@ -238,7 +208,7 @@ checkpoint are available now.</p>
   <div class="wrap">
     <div class="card">
       <h2>Context-Appropriate Emotion</h2>
-      <p> Emergent singing capability, though not explicitly trained on music</p>
+      <p>Emergent singing capability, though not explicitly trained on music</p>
       <div class="sync-grid">
         <section style="min-height:0;">
           <audio id="audio-demo4" controls preload="metadata">
@@ -253,13 +223,7 @@ checkpoint are available now.</p>
   </div>
 </section>
 
-<!-- 导航点 & 分页脚本 + 同步播放器 -->
 <script>
-// --- 预缓存音频：注册 service worker，首次打开即开始下载 ---
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').catch(console.error);
-}
-
 /* ---- 分页：滚轮/键盘 + 右侧圆点 ---- */
 const pages = Array.from(document.querySelectorAll('section.page'));
 const dotsBox = document.getElementById('dots');
@@ -301,27 +265,19 @@ addEventListener('load',()=>{ const id=location.hash.slice(1); const i=id?pages.
 const allAudios = Array.from(document.querySelectorAll('audio'));
 allAudios.forEach(p=>p.addEventListener('play',()=>{ allAudios.forEach(o=>{ if(o!==p) o.pause(); }); }));
 
-/* ---- 对齐播放器封装 ---- */
+/* ---- 对齐播放器（精简版） ---- */
 function mmssms(t){ const m=Math.floor(t/60), s=Math.floor(t%60), ms=Math.floor((t-Math.floor(t))*1000); return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(ms).padStart(3,'0')}`; }
 class SyncPlayer{
   constructor(key,segs){
-    this.audio = document.getElementById(`audio-${key}`);
-    this.nowEl = document.getElementById(`now-${key}`);
+    this.audio  = document.getElementById(`audio-${key}`);
     this.transEl= document.getElementById(`trans-${key}`);
-    this.ctrl = {
-      prev: document.getElementById(`prev-${key}`),
-      next: document.getElementById(`next-${key}`),
-      copy: document.getElementById(`copy-${key}`),
-      q:    document.getElementById(`q-${key}`),
-      find: document.getElementById(`find-${key}`)
-    };
     this.idx=-1;
     this.segments=segs.slice().sort((a,b)=>a.start-b.start);
     for(let i=0;i<this.segments.length;i++){ const cur=this.segments[i], nxt=this.segments[i+1]; if(cur.end==null) cur.end = nxt? nxt.start : Infinity; }
     this.shouldScroll = false; // 仅在用户主动跳转时滚动
     this.render(); this.bind();
   }
-  esc(s){ return s.replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+  esc(s){ return s.replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[ch])); }
   render(){
     this.transEl.innerHTML='';
     this.segments.forEach((seg,i)=>{
@@ -337,112 +293,65 @@ class SyncPlayer{
       this.transEl.appendChild(d);
     });
   }
-
   seek(t,autoplay=false, scroll=false){ this.shouldScroll = !!scroll; this.audio.currentTime=Math.max(0,t); if(autoplay) this.audio.play().catch(()=>{}); }
   findIdx(t){ let lo=0,hi=this.segments.length-1,ans=-1; while(lo<=hi){ const mid=(lo+hi)>>1, seg=this.segments[mid]; if(t<seg.start) hi=mid-1; else if(t>=seg.end) lo=mid+1; else {ans=mid;break;} } return ans; }
-  setActive(i, scroll = true) {
-  const prev = this.idx >= 0 ? this.transEl.querySelector(`.line[data-idx="${this.idx}"]`) : null;
-  const next = i >= 0 ? this.transEl.querySelector(`.line[data-idx="${i}"]`) : null;
-
-  // 如果索引没变，也允许在需要时滚动以确保可见
-  if (i === this.idx) {
-    if (scroll && next) {
-      const container = this.transEl;
-      // 让当前行滚到容器中间
-      const targetTop = next.offsetTop - container.offsetTop - (container.clientHeight - next.clientHeight) / 2;
-      const maxTop = container.scrollHeight - container.clientHeight;
-      container.scrollTo({ top: Math.max(0, Math.min(targetTop, maxTop)), behavior: 'smooth' });
+  setActive(i, scroll = true){
+    const prev = this.idx >= 0 ? this.transEl.querySelector(`.line[data-idx="${this.idx}"]`) : null;
+    const next = i >= 0 ? this.transEl.querySelector(`.line[data-idx="${i}"]`) : null;
+    if (i === this.idx){
+      if (scroll && next){
+        const c=this.transEl;
+        const targetTop = next.offsetTop - c.offsetTop - (c.clientHeight - next.clientHeight)/2;
+        const maxTop = c.scrollHeight - c.clientHeight;
+        c.scrollTo({ top: Math.max(0, Math.min(targetTop, maxTop)), behavior: 'smooth' });
+      }
+      return;
     }
-    return;
-  }
-
-  // 索引发生变化：更新样式并可选滚动
-  if (prev) prev.classList.remove('active');
-  if (next) {
-    next.classList.add('active');
-    if (scroll) {
-      const container = this.transEl;
-      const targetTop = next.offsetTop - container.offsetTop - (container.clientHeight - next.clientHeight) / 2;
-      const maxTop = container.scrollHeight - container.clientHeight;
-      container.scrollTo({ top: Math.max(0, Math.min(targetTop, maxTop)), behavior: 'smooth' });
+    if (prev) prev.classList.remove('active');
+    if (next){
+      next.classList.add('active');
+      if (scroll){
+        const c=this.transEl;
+        const targetTop = next.offsetTop - c.offsetTop - (c.clientHeight - next.clientHeight)/2;
+        const maxTop = c.scrollHeight - c.clientHeight;
+        c.scrollTo({ top: Math.max(0, Math.min(targetTop, maxTop)), behavior: 'smooth' });
+      }
     }
+    this.idx = i;
   }
-  this.idx = i;
-}
-
   onTime(){
-    const t = this.audio.currentTime;
-    if (this.nowEl) this.nowEl.textContent = mmssms(t);
-    const i = this.findIdx(t);
-    const doScroll = this.shouldScroll;   // 用户 seek/点击/prev/next 时才滚
+    const i = this.findIdx(this.audio.currentTime);
+    const doScroll = this.shouldScroll;
     this.setActive(i, doScroll);
-    if (doScroll) this.shouldScroll = false;  // 滚一次后复位
+    if (doScroll) this.shouldScroll = false; // 滚一次后复位
   }
-
-  jump(d){ let i=this.idx; if(i<0) i=d>0?0:this.segments.length-1; else i=Math.min(Math.max(0,i+d),this.segments.length-1); this.seek(this.segments[i].start,true,true); }
-  copy(){ navigator.clipboard?.writeText?.(mmssms(this.audio.currentTime)); }
-  find(q){ if(!q) return; const i=this.segments.findIndex(s=>s.text.toLowerCase().includes(q.toLowerCase())); if(i>=0) this.seek(this.segments[i].start,true,true); }
   bind(){
     const t=()=>this.onTime();
     this.audio.addEventListener('timeupdate',t);
-    this.audio.addEventListener('seeked', ()=>{
-      this.shouldScroll = true;
-      this.onTime();
-    });
-    this.audio.addEventListener('seeking', ()=> { this.shouldScroll = true; });
+    this.audio.addEventListener('seeked', ()=>{ this.shouldScroll = true; this.onTime(); });
+    this.audio.addEventListener('seeking', ()=>{ this.shouldScroll = true; });
     this.audio.addEventListener('play',t);
     this.audio.addEventListener('loadedmetadata',()=>{ const dur=isFinite(this.audio.duration)?this.audio.duration:Infinity; for(let i=0;i<this.segments.length;i++){ if(this.segments[i].end===Infinity) this.segments[i].end=dur; }});
-    this.ctrl.prev && (this.ctrl.prev.onclick=()=>this.jump(-1));
-    this.ctrl.next && (this.ctrl.next.onclick=()=>this.jump(1));
-    this.ctrl.copy && (this.ctrl.copy.onclick=()=>this.copy());
-    if(this.ctrl.q && this.ctrl.find){
-      this.ctrl.find.onclick=()=>this.find(this.ctrl.q.value.trim());
-      this.ctrl.q.addEventListener('keydown',e=>{ if(e.key==='Enter') this.find(e.currentTarget.value.trim()); });
-    }
   }
 }
 
-/* ---- 示例时间戳（请替换为真实数据） ---- */
-fetch("./assets/text/1.5b_4p_90min_gt_timestamp.json")
-  .then(res => res.json())
-  .then(data => {
-    new SyncPlayer('demo1', data);
-    // 在这里调用你后续的渲染逻辑
-  });
-fetch("./assets/text/gpt5_topic_12min_gt_timestamp.json")
-  .then(res => res.json())
-  .then(data => {
-    new SyncPlayer('demo2', data);
-    // 在这里调用你后续的渲染逻辑
-  });
-fetch("./assets/text/chinese_demo_gt_timestamp.json")
-  .then(res => res.json())
-  .then(data => {
-    new SyncPlayer('demo3', data);
-    // 在这里调用你后续的渲染逻辑
-  });
-fetch("./assets/text/2p_see_u_again_gt_timestamp.json")
-  .then(res => res.json())
-  .then(data => {
-    new SyncPlayer('demo4', data);
-    // 在这里调用你后续的渲染逻辑
-  });
+/* ---- 加载时间戳数据 ---- */
+fetch("./assets/text/1.5b_4p_90min_gt_timestamp.json").then(r=>r.json()).then(d=>{ new SyncPlayer('demo1', d); });
+fetch("./assets/text/gpt5_topic_12min_gt_timestamp.json").then(r=>r.json()).then(d=>{ new SyncPlayer('demo2', d); });
+fetch("./assets/text/chinese_demo_gt_timestamp.json").then(r=>r.json()).then(d=>{ new SyncPlayer('demo3', d); });
+fetch("./assets/text/2p_see_u_again_gt_timestamp.json").then(r=>r.json()).then(d=>{ new SyncPlayer('demo4', d); });
+
+/* ---- 边界穿透翻页（仅在达边界时） ---- */
 function atTop(el){ return el.scrollTop <= 0; }
 function atBottom(el){ return Math.ceil(el.scrollTop + el.clientHeight) >= el.scrollHeight; }
+function pageLockThen(delta){ if (Date.now() < lockUntil) return; lockUntil = Date.now() + LOCK_MS; goTo(pageIdx + delta); }
 
-function pageLockThen(delta){
-  if (Date.now() < lockUntil) return;
-  lockUntil = Date.now() + LOCK_MS;
-  goTo(pageIdx + delta);
-}
-
-// 1) 鼠标滚轮 / 触控板：在边界处改为翻页
+// 1) 鼠标滚轮 / 触控板
 document.querySelectorAll('.transcript').forEach(el => {
   el.addEventListener('wheel', (e) => {
-    // 允许在内部滚动；只有到边界且继续滚，才翻页
     const dirDown = e.deltaY > 0;
     if ((dirDown && atBottom(el)) || (!dirDown && atTop(el))) {
-      e.preventDefault();  // 阻止内部滚动继续触发
+      e.preventDefault();
       pageLockThen(dirDown ? +1 : -1);
     }
   }, { passive: false });
@@ -467,9 +376,8 @@ document.querySelectorAll('.transcript').forEach(el => {
   el.addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; }, { passive: true });
   el.addEventListener('touchend', (e) => {
     if (startY == null) return;
-    const dy = e.changedTouches[0].clientY - startY;
-    startY = null;
-    const TH = 40; // 手势阈值，像素
+    const dy = e.changedTouches[0].clientY - startY; startY = null;
+    const TH = 40; // 手势阈值
     if (Math.abs(dy) < TH) return;
     const dirDown = dy < 0; // 上滑=内容向上=down
     if ((dirDown && atBottom(el)) || (!dirDown && atTop(el))) {
@@ -477,8 +385,6 @@ document.querySelectorAll('.transcript').forEach(el => {
     }
   }, { passive: true });
 });
-
-
 </script>
 </body>
 </html>
