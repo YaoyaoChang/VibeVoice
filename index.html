@@ -11,7 +11,7 @@
 <style>
   :root {
     --bg:#ffffff;         /* 背景白色 */
-    --card:#f9f9f9;      /* 卡片浅灰 */
+    --card:#ffffff;      /* 卡片浅灰 */
     --muted:#555555;     /* 次级文字灰 */
     --text:#000000;      /* 主文字黑色 */
     --border:#dddddd;    /* 边框浅灰 */
@@ -47,7 +47,7 @@
   }
   .card {
     background: var(--card);
-    border:1px solid var(--border); border-radius:16px; padding:20px;
+    <!-- border:1px solid var(--border); border-radius:16px; padding:20px; -->
     box-shadow:0 2px 8px rgba(0,0,0,0.08);
     display:flex; flex-direction:column; gap:14px;
     min-height:0; height:100%;
@@ -93,9 +93,9 @@
   .dot { width:10px; height:10px; border-radius:999px; border:1px solid var(--border); background:#eee; cursor:pointer; }
   .dot.active { background:var(--accent); box-shadow:0 0 0 3px rgba(0,102,204,0.25); }
 
-  figure { margin:0; border-radius:14px; overflow:hidden; border:1px solid var(--border); background:#fff; text-align:center; }
+  figure { margin:0; border-radius:14px; overflow:hidden; border:0px solid var(--border); background:#fff; text-align:center; }
   figure img { width:60%; display:inline-block; }
-  figure figcaption { font-size:14px; color:var(--muted); padding:10px 12px; border-top:1px solid var(--border); }
+  figure figcaption { font-size:14px; color:var(--muted); padding:10px 12px; border-top:0px solid var(--border); }
 
   footer { color:var(--muted); font-size:13px; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; }
   h1 { 
@@ -112,9 +112,9 @@
 <!-- <div class="hint">滚轮 / ↑↓ 翻页 · 点击右侧圆点可跳转</div> -->
 
 <!-- Page 1: 概览（一屏，内部自滚动） -->
-<section class="page" id="overview" data-title="Overview">
+<section class="page " id="overview" data-title="Overview">
   <div class="wrap">
-    <div class="card">
+    <div class="card ">
       <div class="scroll" tabindex="0">
       <header>
         <h1 >VibeVoice</h1>
@@ -183,6 +183,7 @@ checkpoint are available now.</p>
           <div class="transcript" id="trans-demo1"></div>
         </section>
       </div>
+      <p style="font-size:0.85em; color:#888; margin-top:0.5em;">  * TTS input is the above text only; timestamps are derived from the generated audio and may contain errors.</p>
     </div>
   </div>
 </section>
