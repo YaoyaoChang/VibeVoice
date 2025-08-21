@@ -103,6 +103,18 @@
     font-size:clamp(28px,4vw,40px); 
     text-align:center; 
   }
+  .links a {
+    text-decoration: none;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .links a:hover {
+    text-decoration: underline;
+  }
+  .links .sep {
+    margin: 0 6px;
+    color: var(--muted);
+  }
 </style>
 </head>
 <body>
@@ -118,6 +130,19 @@
       <div class="scroll" tabindex="0">
       <header>
         <h1 >VibeVoice</h1>
+        <!-- <p class="muted" style="text-align:center;">Author list</p> -->
+
+        <p class="links" style="text-align:center;">
+          <a href="https://aka.ms/GeneralAI" target="_blank">MSRA GenAI Group</a>
+        </p>
+        <p class="links" style="text-align:center;">
+          <a href="https://aka.ms/GeneralAI" target="_blank">📄 PDF</a>
+          <span class="sep">·</span>
+          <a href="https://aka.ms/GeneralAI" target="_blank">💻 Code</a>
+          <span class="sep">·</span>
+          <a href="https://aka.ms/GeneralAI" target="_blank">📦 Checkpoint</a>
+        </p>
+
         <p class="muted">Generating long-form, multi-speaker conversational audio like podcasts poses
 significant challenges for traditional Text-to-Speech (TTS) systems, particularly
 in scalability, speaker consistency, and natural turn-taking. This report presents
@@ -133,32 +158,10 @@ the authentic conversational "vibe" and surpassing all known open-source and
 closed-source dialogue models (e.g., Gemini 2.5 Pro Preview TTS). Code and
 checkpoint are available now.</p>
       </header>
-      <!-- <div class="scroll"> -->
-        <!-- <section class="card" style="height:auto;">
-          <h2>Abstract</h2>
-          <p class="muted">Replace with your abstract …</p>
-        </section> -->
-        <!-- <section class="card" style="height:auto;"> -->
-          <!-- <h2>Figure 1</h2> -->
-          <figure>
-            <img src="./assets/vibevoice-model.jpg" alt="VibeVoice teaser/system overview">
-            <figcaption><b>Fig.1</b> System overview / teaser.</figcaption>
-          </figure>
-        <!-- </section> -->
-        <!-- <section class="card" style="height:auto;"> -->
-          <!-- <h2>BibTeX</h2>
-<pre style="white-space:pre-wrap; user-select:all;">@article{vibevoice2025,
-  title   = {VibeVoice: Expressive and Robust Text-to-Speech},
-  author  = {authors},
-  journal = {ArXiv},
-  year    = {2025},
-  url     = {https://yaoyaochang.github.io/vibevoice/}
-}</pre> -->
-          <!-- <footer>
-            <span>© 2025 VibeVoice</span>
-            <span><a href="#demo1">Go to Demo 1</a></span>
-          </footer> -->
-        <!-- </section> -->
+        <!-- <figure>
+          <img src="./assets/vibevoice-model.jpg" alt="VibeVoice teaser/system overview">
+          <figcaption><b>Fig.1</b> System overview / teaser.</figcaption>
+        </figure> -->
       </div>
     </div>
   </div>
