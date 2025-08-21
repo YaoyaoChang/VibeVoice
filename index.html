@@ -341,28 +341,44 @@ class SyncPlayer{
   seek(t,autoplay=false, scroll=false){ this.shouldScroll = !!scroll; this.audio.currentTime=Math.max(0,t); if(autoplay) this.audio.play().catch(()=>{}); }
   findIdx(t){ let lo=0,hi=this.segments.length-1,ans=-1; while(lo<=hi){ const mid=(lo+hi)>>1, seg=this.segments[mid]; if(t<seg.start) hi=mid-1; else if(t>=seg.end) lo=mid+1; else {ans=mid;break;} } return ans; }
   setActive(i, scroll = true) {
-    if (i === this.idx) return;
-    const prev = this.idx >= 0 ? this.transEl.querySelector(`.line[data-idx="${this.idx}"]`) : null;
-    const next = i >= 0 ? this.transEl.querySelector(`.line[data-idx="${i}"]`) : null;
-    if (prev) prev.classList.remove('active');
-    if (next) {
-      next.classList.add('active');
-      if (scroll) {
-        // 以 transEl 为参考的相对位置
-        const container = this.transEl;
-        const nextTopRel = next.offsetTop - container.offsetTop;
-        let top = nextTopRel - (container.clientHeight - next.clientHeight) / 2;
+  const prev = this.idx >= 0 ? this.transEl.querySelector(`.line[data-idx="${this.idx}"]`) : null;
+  const next = i >= 0 ? this.transEl.querySelector(`.line[data-idx="${i}"]`) : null;
 
-        // 关键：夹紧到 [0, 最大可滚高度]
-        const maxTop = container.scrollHeight - container.clientHeight;
-        top = Math.max(0, Math.min(top, maxTop));
-
-        container.scrollTo({ top, behavior: 'smooth' });
-      }
+  // 如果索引没变，也允许在需要时滚动以确保可见
+  if (i === this.idx) {
+    if (scroll && next) {
+      const container = this.transEl;
+      // 让当前行滚到容器中间
+      const targetTop = next.offsetTop - container.offsetTop - (container.clientHeight - next.clientHeight) / 2;
+      const maxTop = container.scrollHeight - container.clientHeight;
+      container.scrollTo({ top: Math.max(0, Math.min(targetTop, maxTop)), behavior: 'smooth' });
     }
-    this.idx = i;
+    return;
   }
-  onTime(){ const t=this.audio.currentTime; if(this.nowEl) this.nowEl.textContent=mmssms(t); const i=this.findIdx(t); this.setActive(i,true); if(this.shouldScroll) this.shouldScroll=false; }
+
+  // 索引发生变化：更新样式并可选滚动
+  if (prev) prev.classList.remove('active');
+  if (next) {
+    next.classList.add('active');
+    if (scroll) {
+      const container = this.transEl;
+      const targetTop = next.offsetTop - container.offsetTop - (container.clientHeight - next.clientHeight) / 2;
+      const maxTop = container.scrollHeight - container.clientHeight;
+      container.scrollTo({ top: Math.max(0, Math.min(targetTop, maxTop)), behavior: 'smooth' });
+    }
+  }
+  this.idx = i;
+}
+
+  onTime(){
+    const t = this.audio.currentTime;
+    if (this.nowEl) this.nowEl.textContent = mmssms(t);
+    const i = this.findIdx(t);
+    const doScroll = this.shouldScroll;   // 用户 seek/点击/prev/next 时才滚
+    this.setActive(i, doScroll);
+    if (doScroll) this.shouldScroll = false;  // 滚一次后复位
+  }
+
   jump(d){ let i=this.idx; if(i<0) i=d>0?0:this.segments.length-1; else i=Math.min(Math.max(0,i+d),this.segments.length-1); this.seek(this.segments[i].start,true,true); }
   copy(){ navigator.clipboard?.writeText?.(mmssms(this.audio.currentTime)); }
   find(q){ if(!q) return; const i=this.segments.findIndex(s=>s.text.toLowerCase().includes(q.toLowerCase())); if(i>=0) this.seek(this.segments[i].start,true,true); }
@@ -371,7 +387,7 @@ class SyncPlayer{
     this.audio.addEventListener('timeupdate',t);
     this.audio.addEventListener('seeked', ()=>{
       this.shouldScroll = true;
-      this.onTime(); // 强制更新一次
+      this.onTime();
     });
     this.audio.addEventListener('seeking', ()=> { this.shouldScroll = true; });
     this.audio.addEventListener('play',t);
