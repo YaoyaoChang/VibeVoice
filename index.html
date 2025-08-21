@@ -341,14 +341,17 @@ class SyncPlayer{
     }
     this.idx = i;
   }
-  onTime(){ const t=this.audio.currentTime; if(this.nowEl) this.nowEl.textContent=mmssms(t); const i=this.findIdx(t); this.setActive(i,this.shouldScroll); if(this.shouldScroll) this.shouldScroll=false; }
+  onTime(){ const t=this.audio.currentTime; if(this.nowEl) this.nowEl.textContent=mmssms(t); const i=this.findIdx(t); this.setActive(i,true); if(this.shouldScroll) this.shouldScroll=false; }
   jump(d){ let i=this.idx; if(i<0) i=d>0?0:this.segments.length-1; else i=Math.min(Math.max(0,i+d),this.segments.length-1); this.seek(this.segments[i].start,true,true); }
   copy(){ navigator.clipboard?.writeText?.(mmssms(this.audio.currentTime)); }
   find(q){ if(!q) return; const i=this.segments.findIndex(s=>s.text.toLowerCase().includes(q.toLowerCase())); if(i>=0) this.seek(this.segments[i].start,true,true); }
   bind(){
     const t=()=>this.onTime();
     this.audio.addEventListener('timeupdate',t);
-    this.audio.addEventListener('seeked',t);
+    this.audio.addEventListener('seeked', ()=>{
+      this.shouldScroll = true;
+      this.onTime(); // 强制更新一次
+    });
     this.audio.addEventListener('seeking', ()=> { this.shouldScroll = true; });
     this.audio.addEventListener('play',t);
     this.audio.addEventListener('loadedmetadata',()=>{ const dur=isFinite(this.audio.duration)?this.audio.duration:Infinity; for(let i=0;i<this.segments.length;i++){ if(this.segments[i].end===Infinity) this.segments[i].end=dur; }});
