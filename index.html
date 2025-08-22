@@ -436,82 +436,71 @@ checkpoint are available now.</p>
     </div>
   </div>
 </section>
-
 <script>
-/* ---- 分页：滚轮/键盘 + 右侧圆点 ---- */
-const pages = Array.from(document.querySelectorAll('section.page'));
-const dotsBox = document.getElementById('dots');
-let pageIdx = 0, lockUntil = 0;
-const LOCK_MS = 550;
-const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const scrollOpts = { behavior: prefersReduced ? 'auto' : 'smooth', block:'start' };
-
-pages.forEach((sec,i)=>{ const d=document.createElement('div'); d.className='dot'+(i===0?' active':''); d.title=sec.dataset.title||`Page ${i+1}`; d.onclick=()=>goTo(i); dotsBox.appendChild(d); });
-function updateDots(i){ Array.from(dotsBox.children).forEach((el,j)=>el.classList.toggle('active', j===i)); }
-function goTo(i){ i=Math.max(0,Math.min(pages.length-1,i)); pageIdx=i; pages[i].scrollIntoView(scrollOpts); updateDots(i); history.replaceState(null,'','#'+(pages[i].id||('p'+(i+1)))); }
-
-let ioReady=false;
-const io=new IntersectionObserver((ents)=>{ let best={idx:pageIdx,ratio:0}; ents.forEach(e=>{ const i=pages.indexOf(e.target); if(e.intersectionRatio>best.ratio) best={idx:i,ratio:e.intersectionRatio}; }); if(ioReady){ pageIdx=best.idx; updateDots(pageIdx);} },{threshold:[0,.25,.5,.75,1]});
-pages.forEach(s=>io.observe(s)); setTimeout(()=>ioReady=true,200);
-
-document.addEventListener('keydown',(e)=>{
-  const now=Date.now();
-  const tag=(document.activeElement?.tagName||'').toLowerCase();
-  if(tag==='input'||tag==='textarea') return;
-  if(now<lockUntil) return;
-  if(['ArrowDown','PageDown',' '].includes(e.key)){ e.preventDefault(); lockUntil=now+LOCK_MS; goTo(pageIdx+1); }
-  else if(['ArrowUp','PageUp'].includes(e.key)){ e.preventDefault(); lockUntil=now+LOCK_MS; goTo(pageIdx-1); }
-  else if(e.key==='Home'){ e.preventDefault(); goTo(0); }
-  else if(e.key==='End'){ e.preventDefault(); goTo(pages.length-1); }
-},{passive:false});
-
-let wheelAccum=0, wheelTimer=null;
-window.addEventListener('wheel',(e)=>{
-  const now=Date.now(); if(now<lockUntil) return;
-  if(e.target.closest('audio') || e.target.closest('.transcript')) return; // 不劫持内部滚动
-  wheelAccum += e.deltaY; clearTimeout(wheelTimer);
-  wheelTimer=setTimeout(()=>{ if(Math.abs(wheelAccum)<5){wheelAccum=0;return;} lockUntil=Date.now()+LOCK_MS; goTo(pageIdx + (wheelAccum>0?1:-1)); wheelAccum=0; },80);
-},{passive:true});
-
-addEventListener('load',()=>{ const id=location.hash.slice(1); const i=id?pages.findIndex(s=>s.id===id):0; goTo(i>=0?i:0); });
-
-/* ---- 全局互斥播放 ---- */
+/* ---- 全局互斥播放（一个播放，其他暂停） ---- */
 const allAudios = Array.from(document.querySelectorAll('audio'));
-allAudios.forEach(p=>p.addEventListener('play',()=>{ allAudios.forEach(o=>{ if(o!==p) o.pause(); }); }));
+allAudios.forEach(p => p.addEventListener('play', () => {
+  allAudios.forEach(o => { if (o !== p) o.pause(); });
+}));
 
-/* ---- 对齐播放器（精简版） ---- */
-function mmssms(t){ const m=Math.floor(t/60), s=Math.floor(t%60), ms=Math.floor((t-Math.floor(t))*1000); return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(ms).padStart(3,'0')}`; }
+/* ---- 对齐播放器（SyncPlayer） ---- */
+function mmssms(t){
+  const m = Math.floor(t/60), s = Math.floor(t%60), ms = Math.floor((t-Math.floor(t))*1000);
+  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(ms).padStart(3,'0')}`;
+}
+
 class SyncPlayer{
-  constructor(key,segs){
-    this.audio  = document.getElementById(`audio-${key}`);
-    this.transEl= document.getElementById(`trans-${key}`);
-    this.idx=-1;
-    this.segments=segs.slice().sort((a,b)=>a.start-b.start);
-    for(let i=0;i<this.segments.length;i++){ const cur=this.segments[i], nxt=this.segments[i+1]; if(cur.end==null) cur.end = nxt? nxt.start : Infinity; }
+  constructor(key, segs){
+    this.audio   = document.getElementById(`audio-${key}`);
+    this.transEl = document.getElementById(`trans-${key}`);
+    this.idx = -1;
+    this.segments = segs.slice().sort((a,b)=>a.start-b.start);
+    for(let i=0;i<this.segments.length;i++){
+      const cur=this.segments[i], nxt=this.segments[i+1];
+      if (cur.end == null) cur.end = nxt ? nxt.start : Infinity;
+    }
     this.shouldScroll = false; // 仅在用户主动跳转时滚动
     this.render(); this.bind();
   }
-  esc(s){ return s.replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[ch])); }
+  esc(s){
+    return String(s||'').replace(/[&<>"']/g, ch => (
+      {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]
+    ));
+  }
   render(){
-    this.transEl.innerHTML='';
+    this.transEl.innerHTML = '';
     this.segments.forEach((seg,i)=>{
-      const d=document.createElement('div');
-      d.className='line';
-      d.dataset.idx=i;
+      const d = document.createElement('div');
+      d.className = 'line';
+      d.dataset.idx = i;
       d.innerHTML = `
         <div class="ts">${mmssms(seg.start)}</div>
         <div class="spk">${this.esc(seg.speaker || '')}</div>
         <div class="txt">${this.esc(seg.text)}</div>
       `;
-      d.onclick=()=>this.seek(seg.start,true,true);
+      d.onclick = () => this.seek(seg.start, true, true);
       this.transEl.appendChild(d);
     });
   }
-  seek(t,autoplay=false, scroll=false){ this.shouldScroll = !!scroll; this.audio.currentTime=Math.max(0,t); if(autoplay) this.audio.play().catch(()=>{}); }
-  findIdx(t){ let lo=0,hi=this.segments.length-1,ans=-1; while(lo<=hi){ const mid=(lo+hi)>>1, seg=this.segments[mid]; if(t<seg.start) hi=mid-1; else if(t>=seg.end) lo=mid+1; else {ans=mid;break;} } return ans; }
-  setActive(i, scroll = true){
+  seek(t, autoplay=false, scroll=false){
+    this.shouldScroll = !!scroll;
+    this.audio.currentTime = Math.max(0, t);
+    if (autoplay) this.audio.play().catch(()=>{});
+  }
+  findIdx(t){
+    let lo=0, hi=this.segments.length-1, ans=-1;
+    while (lo<=hi){
+      const mid=(lo+hi)>>1, seg=this.segments[mid];
+      if (t < seg.start) hi=mid-1;
+      else if (t >= seg.end) lo=mid+1;
+      else { ans=mid; break; }
+    }
+    return ans;
+  }
+  setActive(i, scroll=true){
     const prev = this.idx >= 0 ? this.transEl.querySelector(`.line[data-idx="${this.idx}"]`) : null;
     const next = i >= 0 ? this.transEl.querySelector(`.line[data-idx="${i}"]`) : null;
+
     if (i === this.idx){
       if (scroll && next){
         const c=this.transEl;
@@ -540,60 +529,21 @@ class SyncPlayer{
     if (doScroll) this.shouldScroll = false; // 滚一次后复位
   }
   bind(){
-    const t=()=>this.onTime();
-    this.audio.addEventListener('timeupdate',t);
-    this.audio.addEventListener('seeked', ()=>{ this.shouldScroll = true; this.onTime(); });
-    this.audio.addEventListener('seeking', ()=>{ this.shouldScroll = true; });
-    this.audio.addEventListener('play',t);
-    this.audio.addEventListener('loadedmetadata',()=>{ const dur=isFinite(this.audio.duration)?this.audio.duration:Infinity; for(let i=0;i<this.segments.length;i++){ if(this.segments[i].end===Infinity) this.segments[i].end=dur; }});
+    const t = () => this.onTime();
+    this.audio.addEventListener('timeupdate', t);
+    this.audio.addEventListener('seeked',  () => { this.shouldScroll = true; this.onTime(); });
+    this.audio.addEventListener('seeking', () => { this.shouldScroll = true; });
+    this.audio.addEventListener('play', t);
+    this.audio.addEventListener('loadedmetadata', ()=>{
+      const dur = isFinite(this.audio.duration) ? this.audio.duration : Infinity;
+      for (let i=0;i<this.segments.length;i++){
+        if (this.segments[i].end === Infinity) this.segments[i].end = dur;
+      }
+    });
   }
 }
 
-/* ---- 边界穿透翻页（仅在达边界时） ---- */
-function atTop(el){ return el.scrollTop <= 0; }
-function atBottom(el){ return Math.ceil(el.scrollTop + el.clientHeight) >= el.scrollHeight; }
-function pageLockThen(delta){ if (Date.now() < lockUntil) return; lockUntil = Date.now() + LOCK_MS; goTo(pageIdx + delta); }
-
-// 1) 鼠标滚轮 / 触控板
-document.querySelectorAll('.transcript').forEach(el => {
-  el.addEventListener('wheel', (e) => {
-    const dirDown = e.deltaY > 0;
-    if ((dirDown && atBottom(el)) || (!dirDown && atTop(el))) {
-      e.preventDefault();
-      pageLockThen(dirDown ? +1 : -1);
-    }
-  }, { passive: false });
-});
-
-// 2) 键盘：当焦点在转写框内时，PageUp/Down、↑/↓、空格到边界翻页
-document.querySelectorAll('.transcript').forEach(el => {
-  el.addEventListener('keydown', (e) => {
-    const keysNext = ['ArrowDown','PageDown',' '];
-    const keysPrev = ['ArrowUp','PageUp'];
-    if (keysNext.includes(e.key) && atBottom(el)) {
-      e.preventDefault(); pageLockThen(+1);
-    } else if (keysPrev.includes(e.key) && atTop(el)) {
-      e.preventDefault(); pageLockThen(-1);
-    }
-  });
-});
-
-// 3) 触摸：在转写框内上/下滑，边界时翻页（移动端）
-document.querySelectorAll('.transcript').forEach(el => {
-  let startY = null;
-  el.addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; }, { passive: true });
-  el.addEventListener('touchend', (e) => {
-    if (startY == null) return;
-    const dy = e.changedTouches[0].clientY - startY; startY = null;
-    const TH = 40; // 手势阈值
-    if (Math.abs(dy) < TH) return;
-    const dirDown = dy < 0; // 上滑=内容向上=down
-    if ((dirDown && atBottom(el)) || (!dirDown && atTop(el))) {
-      pageLockThen(dirDown ? +1 : -1);
-    }
-  }, { passive: true });
-});
-
+/* ---- Tabs：懒加载 JSON + 初始化 SyncPlayer ---- */
 function initTabs(groupId){
   const root = document.getElementById(groupId);
   if (!root) return;
@@ -601,12 +551,9 @@ function initTabs(groupId){
   const panels = root.querySelectorAll('.tabpanel');
 
   function select(targetId){
-    // 切换按钮
     tabs.forEach(b => b.setAttribute('aria-selected', String(b.dataset.target === targetId)));
-    // 切换面板
     panels.forEach(p => p.classList.toggle('active', p.id === targetId));
 
-    // 懒初始化：首次可见才加载 JSON + new SyncPlayer
     const panel = root.querySelector('#' + targetId);
     if (panel && !panel.dataset.inited){
       const key  = panel.dataset.key;
@@ -622,7 +569,6 @@ function initTabs(groupId){
   }
 
   tabs.forEach(b => b.addEventListener('click', () => select(b.dataset.target)));
-  // 默认选中 aria-selected=true 的那个
   const first = root.querySelector('[role="tab"][aria-selected="true"]');
   if (first) select(first.dataset.target);
 }
@@ -632,7 +578,6 @@ initTabs('tabs-demo2');
 initTabs('tabs-demo3');
 initTabs('tabs-demo4');
 </script>
-
 
 </body>
 </html>
