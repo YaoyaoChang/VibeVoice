@@ -128,9 +128,20 @@ The model can synthesize speech up to 90 minutes long with up to 4 distinct spea
   </section>
 
 
-  <!-- Demo 1 -->
-  <section class="page" id="demo1">
-    <h2>Speech with BGM</h2>
+  <section class="page" id="demo4">
+    <h2>Context-aware Expression</h2>
+
+    <div class="case" data-key="demo4-a" data-json="assets/text/2p_see_u_again_gt_timestamp.json">
+      <h3>Case A — Emergent singing capability (no explicit music training)</h3>
+      <div class="sync-block">
+        <audio id="audio-demo4-a" controls preload="metadata">
+          <source src="assets/audio/2p_see_u_again.mp3" type="audio/mpeg">
+        </audio>
+        <div class="transcript" id="trans-demo4-a"></div>
+      </div>
+      <!-- <p style="font-size:0.85em; color:#888; margin:6px 0 0;">* Timestamps are derived from generated audio and may contain errors.</p> -->
+    </div>
+
 
     <div class="case" data-key="demo1-a" data-json="assets/text/gpt5_topic_12min_gt_timestamp.json">
       <h3>Case A — Automatic BGM in the first 48s (no explicit prompt)</h3>
@@ -142,21 +153,9 @@ The model can synthesize speech up to 90 minutes long with up to 4 distinct spea
       </div>
       <p style="font-size:0.85em; color:#888; margin:6px 0 0;">* TTS input is the above text only; timestamps are derived from the generated audio and may contain errors.</p>
     </div>
-
-    <div class="case" data-key="demo1-b" data-json="assets/text/gpt5_topic_12min_gt_timestamp.json">
-      <h3>Case B — Automatic BGM in the first 48s (no explicit prompt)</h3>
-      <div class="sync-block">
-        <audio id="audio-demo1-b" controls preload="metadata">
-          <source src="assets/audio/gpt5_topic_12min.mp3" type="audio/mpeg">
-        </audio>
-        <div class="transcript" id="trans-demo1-b"></div>
-      </div>
-      <!-- <p style="font-size:0.85em; color:#888; margin:6px 0 0;">* Timestamps are derived from generated audio and may contain errors.</p> -->
-    </div>
   </section>
 
   
-  <!-- Demo 2 -->
   <section class="page" id="demo2">
     <h2>Long Audio + Multi-Speaker</h2>
 
@@ -170,19 +169,8 @@ The model can synthesize speech up to 90 minutes long with up to 4 distinct spea
       </div>
     </div>
 
-    <div class="case" data-key="demo2-b" data-json="assets/text/1.5b_4p_90min_gt_timestamp.json">
-      <h3>Case B — 90 mins, 4 speakers, generated at once</h3>
-      <div class="sync-block">
-        <audio id="audio-demo2-b" controls preload="metadata">
-          <source src="assets/audio/1.5b_4p_90min.mp3" type="audio/mpeg">
-        </audio>
-        <div class="transcript" id="trans-demo2-b"></div>
-      </div>
-      <!-- <p style="font-size:0.85em; color:#888; margin:6px 0 0;">* Timestamps are derived from generated audio and may contain errors.</p> -->
-    </div>
   </section>
 
-  <!-- Demo 3 -->
   <section class="page" id="demo3">
     <h2>Cross-lingual</h2>
 
@@ -197,44 +185,8 @@ The model can synthesize speech up to 90 minutes long with up to 4 distinct spea
       <!-- <p style="font-size:0.85em; color:#888; margin:6px 0 0;">* Timestamps are derived from generated audio and may contain errors.</p> -->
     </div>
 
-    <div class="case" data-key="demo3-b" data-json="assets/text/chinese_demo_gt_timestamp.json">
-      <h3>Case B — Woman’s prompt in English, speech in Chinese</h3>
-      <div class="sync-block">
-        <audio id="audio-demo3-b" controls preload="metadata">
-          <source src="assets/audio/chinese_demo.mp3" type="audio/mpeg">
-        </audio>
-        <div class="transcript" id="trans-demo3-b"></div>
-      </div>
-      <!-- <p style="font-size:0.85em; color:#888; margin:6px 0 0;">* Timestamps are derived from generated audio and may contain errors.</p> -->
-    </div>
   </section>
 
-  <!-- Demo 4 -->
-  <section class="page" id="demo4">
-    <h2>Context-Appropriate Emotion</h2>
-
-    <div class="case" data-key="demo4-a" data-json="assets/text/2p_see_u_again_gt_timestamp.json">
-      <h3>Case A — Emergent singing capability (no explicit music training)</h3>
-      <div class="sync-block">
-        <audio id="audio-demo4-a" controls preload="metadata">
-          <source src="assets/audio/2p_see_u_again.mp3" type="audio/mpeg">
-        </audio>
-        <div class="transcript" id="trans-demo4-a"></div>
-      </div>
-      <!-- <p style="font-size:0.85em; color:#888; margin:6px 0 0;">* Timestamps are derived from generated audio and may contain errors.</p> -->
-    </div>
-
-    <div class="case" data-key="demo4-b" data-json="assets/text/2p_see_u_again_gt_timestamp.json">
-      <h3>Case B — Emergent singing capability (no explicit music training)</h3>
-      <div class="sync-block">
-        <audio id="audio-demo4-b" controls preload="metadata">
-          <source src="assets/audio/2p_see_u_again.mp3" type="audio/mpeg">
-        </audio>
-        <div class="transcript" id="trans-demo4-b"></div>
-      </div>
-      <!-- <p style="font-size:0.85em; color:#888; margin:6px 0 0;">* Timestamps are derived from generated audio and may contain errors.</p> -->
-    </div>
-  </section>
 <!-- <footer style="margin:32px 0 16px; font-size:0.85em; color:#888; text-align:center;">
   * Timestamps are derived from generated audio and may contain errors.
 </footer> -->
