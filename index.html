@@ -138,26 +138,26 @@ The model can synthesize speech up to 90 minutes long with up to 4 distinct spea
   <section class="page" id="demo4">
     <h2>Context-Aware Expression</h2>
 
-    <div class="case" data-key="demo4-a" data-json="assets/text/2p_see_u_again_gt_timestamp.json">
-      <h3>Case A — Spontaneous singing</h3>
+    <div class="case" data-key="demo4-a" data-json="assets/text/2p_argument_gt_timestamp.json">
+      <h3>Case A — Spontaneous Emotion</h3>
       <div class="sync-block">
         <audio id="audio-demo4-a" controls preload="metadata">
-          <source src="assets/audio/2p_see_u_again.mp3" type="audio/mpeg">
+          <source src="assets/audio/2p_argument.mp3" type="audio/mpeg">
         </audio>
         <div class="transcript" id="trans-demo4-a"></div>
       </div>
-      <p style="font-size:0.85em; color:#888; margin:6px 0 0;">* TTS input is the above text only; timestamps are derived from the generated audio and may contain errors.</p>
     </div>
 
 
-    <div class="case" data-key="demo4-b" data-json="assets/text/2p_argument_gt_timestamp.json">
-      <h3>Case B — Spontaneous Emotion</h3>
+    <div class="case" data-key="demo4-b" data-json="assets/text/2p_see_u_again_gt_timestamp.json">
+      <h3>Case B — Spontaneous singing</h3>
       <div class="sync-block">
         <audio id="audio-demo4-b" controls preload="metadata">
-          <source src="assets/audio/2p_argument.mp3" type="audio/mpeg">
+          <source src="assets/audio/2p_see_u_again.mp3" type="audio/mpeg">
         </audio>
         <div class="transcript" id="trans-demo4-b"></div>
       </div>
+      <p style="font-size:0.85em; color:#888; margin:6px 0 0;">* TTS input is the above text only; timestamps are derived from the generated audio and may contain errors.</p>
     </div>
   </section>
 
@@ -188,21 +188,21 @@ The model can synthesize speech up to 90 minutes long with up to 4 distinct spea
   <section class="page" id="demo3">
     <h2>Cross-Lingual</h2>
 
-    <div class="case" data-key="demo3-a" data-json="assets/text/1p_EN2CH_gt_timestamp.json">
-      <h3>Case A — English to Mandarin</h3>
+    <div class="case" data-key="demo3-a" data-json="assets/text/1p_CH2EN_gt_timestamp.json">
+      <h3>Case A — Mandarin to English</h3>
       <div class="sync-block">
         <audio id="audio-demo3-a" controls preload="metadata">
-          <source src="assets/audio/1p_EN2CH.mp3" type="audio/mpeg">
+          <source src="assets/audio/1p_CH2EN.mp3" type="audio/mpeg">
         </audio>
         <div class="transcript" id="trans-demo3-a"></div>
       </div>
     </div>
 
-    <div class="case" data-key="demo3-b" data-json="assets/text/1p_CH2EN_gt_timestamp.json">
-      <h3>Case B — Mandarin to English</h3>
+    <div class="case" data-key="demo3-b" data-json="assets/text/1p_EN2CH_gt_timestamp.json">
+      <h3>Case B — English to Mandarin</h3>
       <div class="sync-block">
         <audio id="audio-demo3-b" controls preload="metadata">
-          <source src="assets/audio/1p_CH2EN.mp3" type="audio/mpeg">
+          <source src="assets/audio/1p_EN2CH.mp3" type="audio/mpeg">
         </audio>
         <div class="transcript" id="trans-demo3-b"></div>
       </div>
@@ -223,6 +223,14 @@ The model can synthesize speech up to 90 minutes long with up to 4 distinct spea
       </div>
     </div>
 
+  </section>
+
+  <section class="page" id="evaluation">
+    <h2>Subjective Evaluation Results</h2>
+    
+    <div style="text-align:center; margin:20px 0;">
+      <img src="assets/MOS-all.svg" alt="MOS Evaluation Results" style="max-width:90%; height:auto;">
+    </div>
   </section>
 
 <!-- <footer style="margin:32px 0 16px; font-size:0.85em; color:#888; text-align:center;">
