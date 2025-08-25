@@ -1,0 +1,32 @@
+[
+    {
+        "start": 0.0,
+        "speaker": "Speaker 1",
+        "text": "I can't believe you did it again. I waited for two hours. Two hours! Not a single call, not a text. Do you have any idea how embarrassing that was, just sitting there alone?"
+    },
+    {
+        "start": 12.43,
+        "speaker": "Speaker 2",
+        "text": "Look, I know, I'm sorry, alright? Work was a complete nightmare. My boss dropped a critical deadline on me at the last minute. I didn't even have a second to breathe, let alone check my phone."
+    },
+    {
+        "start": 23.195,
+        "speaker": "Speaker 1",
+        "text": "A nightmare? That's the same excuse you used last time. I'm starting to think you just don't care. It's easier to say 'work was crazy' than to just admit that I'm not a priority for you anymore."
+    },
+    {
+        "start": 34.25,
+        "speaker": "Speaker 2",
+        "text": "That's not fair! Of course you're a priority. You think I enjoyed being stuck in that office, drowning in spreadsheets, while knowing I was letting you down? It was stressful and I felt terrible."
+    },
+    {
+        "start": 45.47,
+        "speaker": "Speaker 1",
+        "text": "I just... I was really looking forward to tonight. I've had a rough week and I just wanted to see you. When you don't show, it doesn't just feel like a broken plan, it feels like I don't matter."
+    },
+    {
+        "start": 56.14,
+        "speaker": "Speaker 2",
+        "text": "You're right. It's not fair to you. There's no excuse. I should have found a way to let you know, even if it was just a thirty-second call. I messed up. I'm really, truly sorry. How can I make it up to you?"
+    }
+]
