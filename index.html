@@ -12,7 +12,7 @@
 <link rel="preload" as="audio" href="assets/audio/4p_climate_100min.mp3">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-<title>VibeVoice — Demos with Sync</title>
+<title>VibeVoice</title>
 <style>
   :root {
     --bg:#ffffff;
@@ -112,11 +112,15 @@
         <a href="https://aka.ms/GeneralAI" target="_blank">MSRA GeneralAI Group</a>
       </p> -->
       <p class="links" style="text-align:center; margin:0 0 14px;">
-        <a href="https://github.com/microsoft/VibeVoice/TechnicalReport.pdf" target="_blank">📄 Report</a>
+        <a href="https://github.com/microsoft/VibeVoice/report/TechnicalReport.pdf" target="_blank">📄 Report</a>
         <span class="sep">·</span>
         <a href="https://github.com/microsoft/VibeVoice" target="_blank"><svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="vertical-align: text-bottom;"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> Code</a>
         <span class="sep">·</span>
         <a href="https://huggingface.co/collections/microsoft/vibevoice-68a2ef24a875c44be47b034f" target="_blank">🤗 Hugging Face</a>
+        <span class="sep">·</span>
+        <a href="https://aka.ms/VibeVoice-Demo" target="_blank">
+          <img src="assets/image/microphone.svg" alt="Demo" width="16" height="16" style="vertical-align:text-bottom;"> Demo
+        </a>
       </p>
 
       <p class="muted" style="margin:0;">
@@ -127,10 +131,10 @@ The model can synthesize speech up to 90 minutes long with up to 4 distinct spea
       
       <div style="display:flex; justify-content:center; align-items:flex-start; gap:60px; margin:20px 0; width:100%;">
         <div style="flex:1; text-align:center;">
-          <img src="assets/VibeVoice.jpg" alt="VibeVoice Framework" style="width:120%; height:400px; object-fit:contain;">
+          <img src="assets/image/VibeVoice.jpg" alt="VibeVoice Framework" style="width:120%; height:400px; object-fit:contain;">
         </div>
         <div style="flex:1; text-align:center;">
-          <img src="assets/MOS-preference.png" alt="MOS Preference Results" style="width:75%; height:400px; object-fit:contain;">
+          <img src="assets/image/MOS-preference.png" alt="MOS Preference Results" style="width:75%; height:400px; object-fit:contain;">
         </div>
       </div>
     </header>
@@ -159,7 +163,6 @@ The model can synthesize speech up to 90 minutes long with up to 4 distinct spea
         </audio>
         <div class="transcript" id="trans-demo4-b"></div>
       </div>
-      <!-- <p style="font-size:0.85em; color:#888; margin:6px 0 0;">* TTS input is the above text only; timestamps are derived from the generated audio and may contain errors.</p> -->
     </div>
   </section>
 
@@ -215,14 +218,25 @@ The model can synthesize speech up to 90 minutes long with up to 4 distinct spea
   <section class="page" id="demo2">
     <h2>Long Conversational Speech</h2>
 
-    <div class="case" data-key="demo2-a" data-json="assets/text/4p_climate_100min_gt_timestamp.json">
+    <div class="case" data-key="demo2-a" data-json="assets/text/4p_climate_45min_gt_timestamp.json">
       <!-- <h3>Case A</h3> -->
       <div class="sync-block">
         <audio id="audio-demo2-a" controls preload="metadata">
-          <source src="assets/audio/4p_climate_100min.mp3" type="audio/mpeg">
+          <source src="assets/audio/4p_climate_45min.mp3" type="audio/mpeg">
         </audio>
         <div class="transcript" id="trans-demo2-a"></div>
       </div>
+    </div>
+
+    <div class="case" data-key="demo2-b" data-json="assets/text/4p_climate_100min_gt_timestamp.json">
+      <!-- <h3>Case A</h3> -->
+      <div class="sync-block">
+        <audio id="audio-demo2-b" controls preload="metadata">
+          <source src="assets/audio/4p_climate_100min.mp3" type="audio/mpeg">
+        </audio>
+        <div class="transcript" id="trans-demo2-b"></div>
+      </div>
+      <p style="font-size:0.85em; color:#888; margin:6px 0 0;">* Timestamps are derived from the generated audio and may contain errors.</p>
     </div>
 
   </section>
