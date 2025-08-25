@@ -3,10 +3,13 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<link rel="preload" as="audio" href="assets/audio/1.5b_4p_90min.mp3">
-<link rel="preload" as="audio" href="assets/audio/gpt5_topic_12min.mp3">
-<link rel="preload" as="audio" href="assets/audio/chinese_demo.mp3">
 <link rel="preload" as="audio" href="assets/audio/2p_see_u_again.mp3">
+<link rel="preload" as="audio" href="assets/audio/2p_argument.mp3">
+<link rel="preload" as="audio" href="assets/audio/3p_gpt5.mp3">
+<link rel="preload" as="audio" href="assets/audio/2p_goat.mp3">
+<link rel="preload" as="audio" href="assets/audio/1p_EN2CH.mp3">
+<link rel="preload" as="audio" href="assets/audio/1p_CH2EN.mp3">
+<link rel="preload" as="audio" href="assets/audio/4p_climate_100min.mp3">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <title>VibeVoice — Demos with Sync</title>
@@ -105,15 +108,15 @@
   <section class="page" id="overview">
     <header>
       <h1>VibeVoice</h1>
-      <p class="links" style="text-align:center; margin:0 0 4px;">
+      <!-- <p class="links" style="text-align:center; margin:0 0 4px;">
         <a href="https://aka.ms/GeneralAI" target="_blank">MSRA GeneralAI Group</a>
-      </p>
+      </p> -->
       <p class="links" style="text-align:center; margin:0 0 14px;">
-        <a href="https://aka.ms/GeneralAI" target="_blank">📄 PDF</a>
+        <a href="https://aka.ms/GeneralAI" target="_blank">📄 Report</a>
         <span class="sep">·</span>
-        <a href="https://github.com/microsoft/VibeVoice" target="_blank">💻 Code</a>
+        <a href="https://github.com/microsoft/VibeVoice" target="_blank"><svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="vertical-align: text-bottom;"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> Code</a>
         <span class="sep">·</span>
-        <a href="https://huggingface.co/microsoft/VibeVoice-1.5b" target="_blank">📦 Models</a>
+        <a href="https://huggingface.co/microsoft/VibeVoice-1.5b" target="_blank">🤗 Checkpoints</a>
       </p>
 
       <p class="muted" style="margin:0;">
@@ -124,15 +127,19 @@ A core innovation of VibeVoice is its use of continuous speech tokenizers (Acous
 The model can synthesize speech up to 90 minutes long with up to 4 distinct speakers, surpassing the typical 1-2 speaker limits of many prior models.
         <!-- 你的简介保持不变，可自行精简 -->
       </p>
+      
+      <div style="text-align:center; margin:20px 0;">
+        <img src="assets/VibeVoice.svg" alt="VibeVoice Framework" style="max-width:80%; height:auto;">
+      </div>
     </header>
   </section>
 
 
   <section class="page" id="demo4">
-    <h2>Context-aware Expression</h2>
+    <h2>Context-Aware Expression</h2>
 
     <div class="case" data-key="demo4-a" data-json="assets/text/2p_see_u_again_gt_timestamp.json">
-      <h3>Case A — Emergent singing capability (no explicit music training)</h3>
+      <h3>Case A — Spontaneous singing</h3>
       <div class="sync-block">
         <audio id="audio-demo4-a" controls preload="metadata">
           <source src="assets/audio/2p_see_u_again.mp3" type="audio/mpeg">
@@ -143,45 +150,77 @@ The model can synthesize speech up to 90 minutes long with up to 4 distinct spea
     </div>
 
 
-    <div class="case" data-key="demo1-a" data-json="assets/text/gpt5_topic_12min_gt_timestamp.json">
-      <h3>Case B — Automatic BGM in the first 48s (no explicit prompt)</h3>
+    <div class="case" data-key="demo4-b" data-json="assets/text/2p_argument_gt_timestamp.json">
+      <h3>Case B — Spontaneous Emotion</h3>
+      <div class="sync-block">
+        <audio id="audio-demo4-b" controls preload="metadata">
+          <source src="assets/audio/2p_argument.mp3" type="audio/mpeg">
+        </audio>
+        <div class="transcript" id="trans-demo4-b"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page" id="demo1">
+    <h2>Podcast with Background Music</h2>
+
+    <div class="case" data-key="demo1-a" data-json="assets/text/3p_gpt5_gt_timestamp.json">
+      <h3>Case A</h3>
       <div class="sync-block">
         <audio id="audio-demo1-a" controls preload="metadata">
-          <source src="assets/audio/gpt5_topic_12min.mp3" type="audio/mpeg">
+          <source src="assets/audio/3p_gpt5.mp3" type="audio/mpeg">
         </audio>
         <div class="transcript" id="trans-demo1-a"></div>
       </div>
     </div>
+
+    <div class="case" data-key="demo1-b" data-json="assets/text/2p_goat_gt_timestamp.json">
+      <h3>Case B</h3>
+      <div class="sync-block">
+        <audio id="audio-demo1-b" controls preload="metadata">
+          <source src="assets/audio/2p_goat.mp3" type="audio/mpeg">
+        </audio>
+        <div class="transcript" id="trans-demo1-b"></div>
+      </div>
+    </div>
   </section>
 
-  
-  <section class="page" id="demo2">
-    <h2>Long Audio + Multi-Speaker</h2>
+  <section class="page" id="demo3">
+    <h2>Cross-Lingual</h2>
 
-    <div class="case" data-key="demo2-a" data-json="assets/text/1.5b_4p_90min_gt_timestamp.json">
-      <h3>Case A — 90 mins, 4 speakers, generated at once</h3>
+    <div class="case" data-key="demo3-a" data-json="assets/text/1p_EN2CH_gt_timestamp.json">
+      <h3>Case A — English to Mandarin</h3>
       <div class="sync-block">
-        <audio id="audio-demo2-a" controls preload="metadata">
-          <source src="assets/audio/1.5b_4p_90min.mp3" type="audio/mpeg">
+        <audio id="audio-demo3-a" controls preload="metadata">
+          <source src="assets/audio/1p_EN2CH.mp3" type="audio/mpeg">
         </audio>
-        <div class="transcript" id="trans-demo2-a"></div>
+        <div class="transcript" id="trans-demo3-a"></div>
+      </div>
+    </div>
+
+    <div class="case" data-key="demo3-b" data-json="assets/text/1p_CH2EN_gt_timestamp.json">
+      <h3>Case B — Mandarin to English</h3>
+      <div class="sync-block">
+        <audio id="audio-demo3-b" controls preload="metadata">
+          <source src="assets/audio/1p_CH2EN.mp3" type="audio/mpeg">
+        </audio>
+        <div class="transcript" id="trans-demo3-b"></div>
       </div>
     </div>
 
   </section>
 
-  <section class="page" id="demo3">
-    <h2>Cross-lingual</h2>
+  <section class="page" id="demo2">
+    <h2>Long Conversational Speech</h2>
 
-    <div class="case" data-key="demo3-a" data-json="assets/text/chinese_demo_gt_timestamp.json">
-      <h3>Case A — Woman’s prompt in English, speech in Chinese</h3>
+    <div class="case" data-key="demo2-a" data-json="assets/text/4p_climate_100min_gt_timestamp.json">
+      <h3>Case A</h3>
       <div class="sync-block">
-        <audio id="audio-demo3-a" controls preload="metadata">
-          <source src="assets/audio/chinese_demo.mp3" type="audio/mpeg">
+        <audio id="audio-demo2-a" controls preload="metadata">
+          <source src="assets/audio/4p_climate_100min.mp3" type="audio/mpeg">
         </audio>
-        <div class="transcript" id="trans-demo3-a"></div>
+        <div class="transcript" id="trans-demo2-a"></div>
       </div>
-      <!-- <p style="font-size:0.85em; color:#888; margin:6px 0 0;">* Timestamps are derived from generated audio and may contain errors.</p> -->
     </div>
 
   </section>
@@ -259,7 +298,8 @@ class SyncPlayer{
     if (i === this.idx){
       if (scroll && next){
         const c=this.transEl;
-        const targetTop = next.offsetTop - c.offsetTop - (c.clientHeight - next.clientHeight)/2;
+        // 滚动到顶部，而不是中心
+        const targetTop = next.offsetTop - c.offsetTop;
         const maxTop = c.scrollHeight - c.clientHeight;
         c.scrollTo({ top: Math.max(0, Math.min(targetTop, maxTop)), behavior: 'smooth' });
       }
@@ -270,7 +310,8 @@ class SyncPlayer{
       next.classList.add('active');
       if (scroll){
         const c=this.transEl;
-        const targetTop = next.offsetTop - c.offsetTop - (c.clientHeight - next.clientHeight)/2;
+        // 滚动到顶部，而不是中心
+        const targetTop = next.offsetTop - c.offsetTop;
         const maxTop = c.scrollHeight - c.clientHeight;
         c.scrollTo({ top: Math.max(0, Math.min(targetTop, maxTop)), behavior: 'smooth' });
       }
@@ -279,9 +320,9 @@ class SyncPlayer{
   }
   onTime(){
     const i = this.findIdx(this.audio.currentTime);
-    const doScroll = this.shouldScroll;
+    // 播放时始终启用滚动，除非音频已暂停
+    const doScroll = !this.audio.paused;
     this.setActive(i, doScroll);
-    if (doScroll) this.shouldScroll = false;
   }
   bind(){
     const t = () => this.onTime();
