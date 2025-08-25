@@ -237,215 +237,165 @@
     {
         "start": 688.73,
         "speaker": "Speaker 2",
-        "text": "Yes, exactly. The science has matured to that point. For example, studies have found that some recent heatwaves, like the one in the Pacific Northwest in 2021, would have been virtually impossible without human-induced climate change. This ability to quantify the human fingerprint on disasters is profound. It transforms climate change from a distant, future threat into a direct and measurable cause of the harm and damage people are experiencing today."
+        "text": "Yes, exactly. Wildfire seasons have become longer and more intense in many parts of the world. Scientific analysis estimates that human-caused climate change has already doubled the area of forest burned in the Western United States in recent decades. And this creates a terrifying feedback loop. These megafires don't just destroy communities, they release enormous amounts of stored carbon back into the atmosphere, which in turn causes more warming, which then leads to more fires."
     },
     {
-        "start": 702.83,
-        "speaker": "Speaker 1",
-        "text": "And this science has profound implications, doesn't it, Carter? It means the conversation shifts from future projections to present-day accountability. So let's talk about those cascading consequences the report details. It frames extreme weather as the new normal. What does that actually look like?"
-    },
-    {
-        "start": 705.65,
-        "speaker": "Speaker 2",
-        "text": "It looks like a world where the weather has fundamentally shifted gears. The science of attribution has now firmly linked the dramatic rise in the frequency and intensity of extreme events to human-caused warming. So what used to be a rare event is now becoming a regular occurrence. In 2024 alone, for example, there were over 600 reported extreme weather events."
-    },
-    {
-        "start": 718.2008510638298,
-        "speaker": "Speaker 4",
-        "text": "It really does feel that way. I mean, the summer heat seems to build earlier and last longer, and it feels more oppressive, more dangerous than I ever remember. And then, when the rain finally comes, it's not a gentle shower. It's a deluge that overwhelms everything."
-    },
-    {
-        "start": 727.7327659574468,
-        "speaker": "Speaker 2",
-        "text": "You've just described the mechanics of it perfectly, Maya. Extreme heat events have become more frequent and more severe. Temperatures hitting over 40 degrees Celsius, which is 104 degrees Fahrenheit, used to be a rarity in many places. Now, it's becoming common. And that heat leads to the paradox of the water cycle."
-    },
-    {
-        "start": 737.7967272727273,
-        "speaker": "Speaker 3",
-        "text": "A paradox? How so? It seems to me we're either in a drought or a flood. How can both be happening more often? It feels contradictory."
-    },
-    {
-        "start": 739.636,
-        "speaker": "Speaker 2",
-        "text": "It does, but they are two sides of the same coin. A warmer atmosphere holds more moisture, about 7 percent more for every single degree Celsius of warming. So when it does rain, the downpours are far heavier, which dramatically increases flood risk. In fact, since the year 2000, flood-related disasters have risen by 134 percent compared to the two decades before."
-    },
-    {
-        "start": 744.2341818181818,
-        "speaker": "Speaker 1",
-        "text": "But what about the drought side of that coin?"
-    },
-    {
-        "start": 747.0508235294118,
-        "speaker": "Speaker 2",
-        "text": "At the same time, those higher temperatures bake the land. They increase evaporation from soil, from rivers, from reservoirs, leading to more rapid and severe droughts in many regions. This has given rise to a phenomenon that scientists are now calling climate whiplash, where a region can swing violently between a devastating drought one year and catastrophic floods the next. It just overwhelms our infrastructure and our ecosystems."
-    },
-    {
-        "start": 747.0508235294118,
-        "speaker": "Speaker 1",
-        "text": "And this combination of prolonged heat and severe drought creates a perfect storm for another disaster we see constantly on the news: wildfires."
-    },
-    {
-        "start": 752.4174117647059,
-        "speaker": "Speaker 2",
-        "text": "Exactly. Wildfire seasons have become longer and more intense in many parts of the world. Scientific analysis estimates that human-caused climate change has already doubled the area of forest burned in the Western United States in recent decades. And this creates a terrifying feedback loop. These megafires don't just destroy communities, they release enormous amounts of stored carbon back into the atmosphere, which in turn causes more warming, which then leads to more fires."
-    },
-    {
-        "start": 774.89,
+        "start": 715.52,
         "speaker": "Speaker 4",
         "text": "I live in California, and that feedback loop is something you can feel in your bones. The fear during fire season is palpable. And even if you're not near the flames, the smoke can choke the sky for weeks. It's a constant, unhealthy reminder of what's happening."
     },
     {
-        "start": 788.73,
+        "start": 729.52,
         "speaker": "Speaker 1",
         "text": "Maya, you've taken us right to the next critical point. These disasters are not just statistics. They have a direct and severe impact on our health. The report goes so far as to call climate change the greatest global health threat of the 21st century. Carter?"
     },
     {
-        "start": 805.1717142857143,
+        "start": 743.6210909090909,
         "speaker": "Speaker 2",
         "text": "It is, without a doubt. The impacts are extensive. Let's start with the most direct one: the heat itself. Extreme heat is one of the deadliest weather phenomena. The IPCC confirms with very high confidence that the increase in extreme heat has resulted in human mortality and morbidity in every region of the world."
     },
     {
-        "start": 828.2171111111111,
+        "start": 777.8346808510638,
         "speaker": "Speaker 3",
         "text": "We hear about vulnerable people being at risk during heatwaves, which makes sense. But does it have a broader impact on the general population, on the economy?"
     },
     {
-        "start": 843.984347826087,
+        "start": 786.6687234042554,
         "speaker": "Speaker 2",
         "text": "A massive one. The Lancet Countdown on Health and Climate Change, which is a major annual report, documented these record-breaking health threats. They estimated that in 2023, 3.4 billion potential labor hours were lost globally just due to people being exposed to extreme heat. That’s an increase of 69 percent compared to the average in the 1990s. So yes, it has huge economic and productivity impacts."
     },
     {
-        "start": 874.2168253968255,
+        "start": 824.1797777777778,
         "speaker": "Speaker 1",
         "text": "And those are just the direct impacts of the heat itself. What about the less obvious health threats?"
     },
     {
-        "start": 882.3993650793651,
+        "start": 839.1816666666666,
         "speaker": "Speaker 2",
         "text": "They are just as concerning. A warmer world is a more hospitable world for the vectors that carry diseases. Rising temperatures and changing rainfall patterns are expanding the geographic range for diseases like malaria, dengue, West Nile virus, and Lyme disease. We're seeing them appear in places they've never been before."
     },
     {
-        "start": 898.4338461538462,
+        "start": 864.91,
         "speaker": "Speaker 4",
         "text": "And it must affect our food and water, the very foundations of our health."
     },
     {
-        "start": 902.7169230769231,
+        "start": 871.2711111111112,
         "speaker": "Speaker 2",
         "text": "Absolutely. Climate change directly undermines both. The report notes that climate change has slowed the growth of agricultural productivity over the past 50 years. It's a key driver of the global food insecurity that affected, by some estimates, over 750 million people in 2023. At the same time, about half the world's population, that's four billion people, now experiences severe water scarcity for at least one month of the year, a situation made much worse by melting glaciers and prolonged droughts."
     },
     {
-        "start": 933.55,
+        "start": 899.7723076923077,
         "speaker": "Speaker 4",
         "text": "And beyond all the physical ailments, there has to be a psychological toll. The stress of living with this uncertainty, the trauma of surviving a disaster, the anxiety about what the future holds for your children. The report touches on mental health, doesn't it?"
     },
     {
-        "start": 946.88,
+        "start": 914.8169014084507,
         "speaker": "Speaker 2",
         "text": "It does. This is a growing and critical area of concern. The IPCC has now clearly associated increasing temperatures and the trauma from extreme events with significant challenges to mental health. This includes post-traumatic stress disorder after a disaster, anxiety and depression when people lose their homes or livelihoods, and a broader condition people are calling eco-anxiety, especially among young people, about the future of the planet."
     },
     {
-        "start": 975.3880645161289,
+        "start": 936.65,
         "speaker": "Speaker 1",
         "text": "And this idea of a psychological toll, this eco-anxiety, leads to another form of stress: financial. The report makes it clear that the economic consequences of climate change have become impossible to ignore over the last decade. Carter, can you start by outlining the scale of these costs?"
     },
     {
-        "start": 999.7935897435898,
+        "start": 954.63,
         "speaker": "Speaker 2",
         "text": "The scale is immense, and it's escalating rapidly. The most direct measure we have comes from the global reinsurance industry, the companies that insure the insurance companies. Data from the Swiss Re Institute shows that for five consecutive years, from 2020 through 2024, the global insured losses from natural catastrophes have surpassed 100 billion US dollars."
     },
     {
-        "start": 1022.3247945205479,
+        "start": 971.5824193548386,
         "speaker": "Speaker 3",
         "text": "Okay, 100 billion is a massive number. But you have to wonder, isn't some of that just due to inflation, or the simple fact that we've built more expensive homes and cities in high-risk areas like coastlines? Are the storms themselves really causing more financial damage, or do we just have more valuable things in their way?"
     },
     {
-        "start": 1042.962602739726,
+        "start": 996.4653846153847,
         "speaker": "Speaker 2",
         "text": "That's a very important point, Frank. And yes, growing asset values in vulnerable areas, what they call exposure, is definitely a part of the story. However, the data clearly shows that the primary driver of the upward trend is the increased frequency and intensity of the severe weather events themselves. For example, in 2024, the total economic losses from natural disasters hit an estimated 318 billion dollars. The insured portion was 137 billion. The rest was uninsured."
     },
     {
-        "start": 1065.5115,
+        "start": 1047.7404918032785,
         "speaker": "Speaker 1",
         "text": "So more than half of all the losses were not covered by insurance. What does the report say about that?"
     },
     {
-        "start": 1074.597,
+        "start": 1057.7063934426228,
         "speaker": "Speaker 2",
         "text": "It refers to this as the protection gap, and this gap is widening. In 2024, 57 percent of all global economic losses from these catastrophes were uninsured. This is a huge problem, especially in developing countries where very few people have insurance. For these communities, a single disaster can wipe out years of economic development and trap them in a cycle of poverty and recovery."
     },
     {
-        "start": 1105.7866666666669,
+        "start": 1090.0554166666668,
         "speaker": "Speaker 4",
         "text": "And this isn't just an abstract global statistic. I mean, we see it in our own communities. We hear stories of insurance premiums skyrocketing to the point where they are unaffordable. Or worse, insurance companies simply pulling out of entire states like Florida or California because the risk of wildfire or flooding has become too high. This creates this incredible financial stress for families who are just trying to protect their homes."
     },
     {
-        "start": 1140.3736363636363,
+        "start": 1117.8278260869565,
         "speaker": "Speaker 1",
         "text": "And it's not just private homes and property. Our shared public infrastructure is also facing enormous risks."
     },
     {
-        "start": 1146.7472727272727,
+        "start": 1123.3084782608696,
         "speaker": "Speaker 2",
         "text": "That's right. Our entire modern society, the energy grids, transportation networks, water treatment plants, they were all designed and built for a climate that no longer exists."
     },
     {
-        "start": 1160.202727272727,
+        "start": 1133.645909090909,
         "speaker": "Speaker 2",
         "text": "Sea level rise directly threatens ports and coastal cities, extreme heat puts an incredible strain on power grids, and intense flooding can destroy roads and bridges. The World Bank has warned that the cost of inaction, particularly in terms of damage to infrastructure, could run into the trillions of dollars."
     },
     {
-        "start": 1180.0144615384615,
+        "start": 1152.0586363636362,
         "speaker": "Speaker 3",
         "text": "Trillions in damage. But fixing it would also cost trillions. I mean, upgrading a nation's entire power grid or rebuilding its coastal defenses requires a colossal upfront investment. Where is that money supposed to come from, especially for countries that are already struggling?"
     },
     {
-        "start": 1198.1688333333334,
+        "start": 1167.0975384615383,
         "speaker": "Speaker 2",
         "text": "It's a major challenge, but the analysis shows that inaction is far more expensive. The World Bank estimates that for every one dollar invested in making infrastructure more climate-resilient now, we could see a benefit of four dollars in avoided damages and disruptions down the road. It’s a classic case of an ounce of prevention being worth a pound of cure."
     },
     {
-        "start": 1221.2320000000002,
+        "start": 1190.3728333333333,
         "speaker": "Speaker 1",
         "text": "When homes are destroyed, infrastructure fails, and livelihoods are lost, people are inevitably forced to move. The report identifies climate change as a powerful driver of human displacement."
     },
     {
-        "start": 1231.0048717948719,
+        "start": 1198.4936666666667,
         "speaker": "Speaker 2",
         "text": "Yes, it acts as a threat multiplier. The number of forcibly displaced people worldwide has nearly doubled in the last ten years, reaching an estimated 123.2 million by the end of 2024."
     },
     {
-        "start": 1242.5865079365078,
+        "start": 1212.7863333333335,
         "speaker": "Speaker 2",
         "text": "And while conflict is still a primary driver, the IPCC states with high confidence that climate and weather extremes are increasingly forcing people from their homes on every single continent. In fact, 2024 saw the highest number of new displacements from extreme weather in 16 years."
     },
     {
-        "start": 1262.67,
+        "start": 1234.3094871794872,
         "speaker": "Speaker 3",
         "text": "I understand the numbers, but I think it's tricky to label someone a climate refugee. People move for all sorts of reasons, for better jobs, to escape poverty, for family. How can you really untangle all those factors and say with certainty that someone was displaced specifically by climate change?"
     },
     {
-        "start": 1290.949342105263,
+        "start": 1251.3687301587302,
         "speaker": "Speaker 2",
         "text": "You've hit on the core of the issue. It's rarely a single cause, which is why the term threat multiplier is so accurate. A drought, for example, can kill crops, which leads to economic collapse, which can then lead to resource conflicts, and all of those factors together push people to move."
     },
     {
-        "start": 1307.845,
+        "start": 1292.920657894737,
         "speaker": "Speaker 2",
         "text": "Climate change is the spark that ignites these other pre-existing vulnerabilities. And the report highlights a chilling statistic on this point: between 2010 and 2020, the death rate from floods, droughts, and storms was 15 times higher in highly vulnerable regions compared to the most secure ones."
     },
     {
-        "start": 1325.6266666666666,
+        "start": 1313.6675,
         "speaker": "Speaker 4",
         "text": "And it's not just people who are being displaced and harmed. It's... it's everything else. The entire web of life that supports us."
     },
     {
-        "start": 1338.1327118644067,
+        "start": 1326.5649999999998,
         "speaker": "Speaker 1",
         "text": "That’s a vital point, Maya. The report draws a direct line between the climate crisis and the broader biodiversity crisis that's happening all around us. Carter?"
     },
     {
-        "start": 1347.0563559322034,
+        "start": 1342.1329661016948,
         "speaker": "Speaker 2",
         "text": "Yes, the two are deeply intertwined. Climate change is a primary driver of what many scientists now refer to as the Earth's sixth mass extinction. A landmark global assessment from the IPBES warned that an estimated one million animal and plant species are now threatened with extinction, many within decades."
     },
