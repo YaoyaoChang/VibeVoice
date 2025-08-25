@@ -120,12 +120,11 @@
       </p>
 
       <p class="muted" style="margin:0;">
-        VibeVoice is a novel framework designed for generating expressive, long-form, multi-speaker conversational audio, such as podcasts, from text. It addresses significant challenges in traditional Text-to-Speech (TTS) systems, particularly in scalability, speaker consistency, and natural turn-taking.
+        VibeVoice is a novel framework designed for generating <b>expressive, long-form, multi-speaker conversational audio</b>, such as podcasts, from text. It addresses significant challenges in traditional Text-to-Speech (TTS) systems, particularly in scalability, speaker consistency, and natural turn-taking.
 
 A core innovation of VibeVoice is its use of continuous speech tokenizers (Acoustic and Semantic) operating at an ultra-low frame rate of 7.5 Hz. These tokenizers efficiently preserve audio fidelity while significantly boosting computational efficiency for processing long sequences. VibeVoice employs a next-token diffusion framework, leveraging a Large Language Model (LLM) to understand textual context and dialogue flow, and a diffusion head to generate high-fidelity acoustic details.
 
 The model can synthesize speech up to 90 minutes long with up to 4 distinct speakers, surpassing the typical 1-2 speaker limits of many prior models.
-        <!-- 你的简介保持不变，可自行精简 -->
       </p>
       
       <div style="display:flex; justify-content:center; align-items:flex-start; gap:20px; margin:20px 0; width:100%;">
@@ -144,7 +143,7 @@ The model can synthesize speech up to 90 minutes long with up to 4 distinct spea
     <h2>Context-Aware Expression</h2>
 
     <div class="case" data-key="demo4-a" data-json="assets/text/2p_argument_gt_timestamp.json">
-      <h3>Case A — Spontaneous Emotion</h3>
+      <h3>Spontaneous Emotion</h3>
       <div class="sync-block">
         <audio id="audio-demo4-a" controls preload="metadata">
           <source src="assets/audio/2p_argument.mp3" type="audio/mpeg">
@@ -155,7 +154,7 @@ The model can synthesize speech up to 90 minutes long with up to 4 distinct spea
 
 
     <div class="case" data-key="demo4-b" data-json="assets/text/2p_see_u_again_gt_timestamp.json">
-      <h3>Case B — Spontaneous singing</h3>
+      <h3>Spontaneous singing</h3>
       <div class="sync-block">
         <audio id="audio-demo4-b" controls preload="metadata">
           <source src="assets/audio/2p_see_u_again.mp3" type="audio/mpeg">
@@ -170,7 +169,7 @@ The model can synthesize speech up to 90 minutes long with up to 4 distinct spea
     <h2>Podcast with Background Music</h2>
 
     <div class="case" data-key="demo1-a" data-json="assets/text/3p_gpt5_gt_timestamp.json">
-      <h3>Case A</h3>
+      <h3>Example 1</h3>
       <div class="sync-block">
         <audio id="audio-demo1-a" controls preload="metadata">
           <source src="assets/audio/3p_gpt5.mp3" type="audio/mpeg">
@@ -180,7 +179,7 @@ The model can synthesize speech up to 90 minutes long with up to 4 distinct spea
     </div>
 
     <div class="case" data-key="demo1-b" data-json="assets/text/2p_goat_gt_timestamp.json">
-      <h3>Case B</h3>
+      <h3>Example 2</h3>
       <div class="sync-block">
         <audio id="audio-demo1-b" controls preload="metadata">
           <source src="assets/audio/2p_goat.mp3" type="audio/mpeg">
@@ -194,7 +193,7 @@ The model can synthesize speech up to 90 minutes long with up to 4 distinct spea
     <h2>Cross-Lingual</h2>
 
     <div class="case" data-key="demo3-a" data-json="assets/text/1p_CH2EN_gt_timestamp.json">
-      <h3>Case A — Mandarin to English</h3>
+      <h3>Mandarin to English</h3>
       <div class="sync-block">
         <audio id="audio-demo3-a" controls preload="metadata">
           <source src="assets/audio/1p_CH2EN.mp3" type="audio/mpeg">
@@ -204,7 +203,7 @@ The model can synthesize speech up to 90 minutes long with up to 4 distinct spea
     </div>
 
     <div class="case" data-key="demo3-b" data-json="assets/text/1p_EN2CH_gt_timestamp.json">
-      <h3>Case B — English to Mandarin</h3>
+      <h3>English to Mandarin</h3>
       <div class="sync-block">
         <audio id="audio-demo3-b" controls preload="metadata">
           <source src="assets/audio/1p_EN2CH.mp3" type="audio/mpeg">
@@ -219,7 +218,7 @@ The model can synthesize speech up to 90 minutes long with up to 4 distinct spea
     <h2>Long Conversational Speech</h2>
 
     <div class="case" data-key="demo2-a" data-json="assets/text/4p_climate_100min_gt_timestamp.json">
-      <h3>Case A</h3>
+      <!-- <h3>Case A</h3> -->
       <div class="sync-block">
         <audio id="audio-demo2-a" controls preload="metadata">
           <source src="assets/audio/4p_climate_100min.mp3" type="audio/mpeg">
