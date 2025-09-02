@@ -297,29 +297,59 @@ def main():
             #     low_cpu_mem_usage=False,
             #     attn_implementation='sdpa',
             # )
-            
             from accelerate import infer_auto_device_map, dispatch_model
             from accelerate.utils import get_balanced_memory
+            import torch, os
+
+            offload_dir = "/content/offload"
+            os.makedirs(offload_dir, exist_ok=True)
+
+            # 1) 先整机载入（非 meta 模式），避免“没有设备”的报错
             model = VibeVoiceForConditionalGenerationInference.from_pretrained(
                 args.model_path,
                 torch_dtype=torch.bfloat16,
-                device_map=None,              # 先别自动分配
-                low_cpu_mem_usage=False,      # 明确关闭
+                device_map=None,            # 先不分配
+                low_cpu_mem_usage=False,    # 关键：关掉 meta 加载
                 attn_implementation="sdpa",
             )
-            max_mem = {0: "15GiB", "cpu": "12GiB"}
-            balanced = get_balanced_memory(model, max_memory=max_mem, dtype="bfloat16")
+
+            # 2) 计算内存上限 & 自动推断设备映射（包含 buffers，且缺省回落到 CPU）
+            max_mem = {"cuda:0": "15GiB", "cpu": "12GiB"}
+            _ = get_balanced_memory(model, max_memory=max_mem, dtype="bfloat16")  # 可不使用返回值，但会做一次估计
             dev_map = infer_auto_device_map(
                 model,
                 max_memory=max_mem,
-                no_split_module_classes=[],   # 如有需要可以填入不切分的模块名
                 dtype="bfloat16",
+                include_buffers=True,
+                fallback_to_cpu=True,       # ★ 未匹配项回落到 CPU
             )
+
+            # 3) 针对遗漏的自定义 buffer 做兜底（有些结构里 infer 仍可能漏）
+            missing = []
+            need_fix = {"model.speech_scaling_factor", "model.speech_bias_factor"}
+            for name, _ in model.named_parameters(recurse=True):
+                pass  # 占位：只为了与 buffers 分开遍历
+            for name, _ in model.named_buffers(recurse=True):
+                if name in need_fix:
+                    # 如果该名称或其上层模块没有在 dev_map 里，就单独指定到 CPU
+                    covered = any(name == k or name.startswith(k + ".") for k in dev_map.keys())
+                    if not covered:
+                        dev_map[name] = "cpu"
+                        missing.append(name)
+
+            if missing:
+                print("[device_map patched to CPU]:", missing)
+
+            # 4) 派发到设备，开启 buffer 卸载
             model = dispatch_model(
                 model,
                 device_map=dev_map,
                 offload_dir=offload_dir,
+                offload_buffers=True,       # ★ buffer 自动离盘/落 CPU，更省显存
             )
+
+            # 后续就可以正常用 model 了
+
             args.device = 'cuda'
         else:  # cpu
             model = VibeVoiceForConditionalGenerationInference.from_pretrained(
