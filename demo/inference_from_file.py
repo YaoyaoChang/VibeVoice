@@ -464,7 +464,7 @@ def main():
             os.makedirs(offload_dir, exist_ok=True)
 
             dtype = torch.float16  # T4 只支持 fp16
-            max_mem = {0: "14.5GiB", "cpu": "12GiB"}
+            max_mem = {0: "14GiB", "cpu": "12GiB"}
 
             # 1) 先用 meta 初始化模型，避免占用 CPU 内存
             with init_empty_weights():
