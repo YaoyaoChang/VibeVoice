@@ -285,6 +285,14 @@ def main():
                 device_map="cuda",
                 attn_implementation=attn_impl_primary,
             )
+        elif args.device == 'T4':
+            model = VibeVoiceForConditionalGenerationInference.from_pretrained(
+                args.model_path,
+                torch_dtype=load_dtype,
+                device_map="auto", 
+                max_memory = {'cuda:0': '15GiB', 'cpu': '12GiB'},
+                attn_implementation='sdpa',
+            )
         else:  # cpu
             model = VibeVoiceForConditionalGenerationInference.from_pretrained(
                 args.model_path,
