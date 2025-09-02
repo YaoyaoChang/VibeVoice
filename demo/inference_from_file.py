@@ -303,50 +303,71 @@ def main():
             offload_dir = "/content/offload"
             os.makedirs(offload_dir, exist_ok=True)
 
-            # 1) 先整机载入（非 meta 模式），避免“没有设备”的报错
+            dtype = torch.float16  # ★ T4 用 FP16
+
+            # 1) 先整机载入（非 meta 模式）
             model = VibeVoiceForConditionalGenerationInference.from_pretrained(
                 args.model_path,
-                torch_dtype=torch.bfloat16,
-                device_map=None,            # 先不分配
-                low_cpu_mem_usage=False,    # 关键：关掉 meta 加载
+                torch_dtype=dtype,
+                device_map=None,
+                low_cpu_mem_usage=False,   # 关键：避免 meta 加载
                 attn_implementation="sdpa",
             )
 
-            # 2) 计算内存上限 & 自动推断设备映射（包含 buffers，且缺省回落到 CPU）
+            # 1.1) 将所有“meta buffer”先在 CPU 实体化（兜底防炸）
+            patched = []
+            for mod_name, module in model.named_modules():
+                for bname, buf in list(module._buffers.items()):
+                    if isinstance(buf, torch.Tensor) and getattr(buf, "is_meta", False):
+                        module._buffers[bname] = torch.zeros(
+                            buf.shape, dtype=(buf.dtype or dtype), device="cpu"
+                        )
+                        full = f"{mod_name+'.' if mod_name else ''}{bname}"
+                        patched.append(full)
+            if patched:
+                print("[materialized meta buffers on CPU]:", patched)
+
+            # 2) 自动推断设备映射
             max_mem = {0: "14GiB", "cpu": "12GiB"}
-            _ = get_balanced_memory(model, max_memory=max_mem, dtype="bfloat16")  # 可不使用返回值，但会做一次估计
+            _ = get_balanced_memory(model, max_memory=max_mem, dtype=str(dtype).split(".")[-1])
             dev_map = infer_auto_device_map(
                 model,
                 max_memory=max_mem,
-                dtype="bfloat16",
+                no_split_module_classes=[],  # 有需要可填你的 block 名
+                dtype=str(dtype).split(".")[-1],
             )
 
-            # 3) 针对遗漏的自定义 buffer 做兜底（有些结构里 infer 仍可能漏）
-            missing = []
-            need_fix = {"model.speech_scaling_factor", "model.speech_bias_factor"}
-            for name, _ in model.named_parameters(recurse=True):
-                pass  # 占位：只为了与 buffers 分开遍历
-            for name, _ in model.named_buffers(recurse=True):
-                if name in need_fix:
-                    # 如果该名称或其上层模块没有在 dev_map 里，就单独指定到 CPU
-                    covered = any(name == k or name.startswith(k + ".") for k in dev_map.keys())
-                    if not covered:
-                        dev_map[name] = "cpu"
-                        missing.append(name)
+            # 2.1) 覆盖兜底：把所有“未被任何前缀覆盖”的参数/缓冲区指定到 CPU
+            def _covered(name: str, mapping: dict) -> bool:
+                return any(name == k or name.startswith(k + ".") for k in mapping)
 
-            if missing:
-                print("[device_map patched to CPU]:", missing)
+            extra = []
+            for name, _ in list(model.named_parameters()) + list(model.named_buffers()):
+                if not _covered(name, dev_map):
+                    dev_map[name] = "cpu"
+                    extra.append(name)
+            if extra:
+                print(f"[device_map expanded to cover {len(extra)} items on CPU]")
 
-            # 4) 派发到设备，开启 buffer 卸载
+            # 3) 派发，允许 buffer 卸载
             model = dispatch_model(
                 model,
                 device_map=dev_map,
                 offload_dir=offload_dir,
-                offload_buffers=True,       # ★ buffer 自动离盘/落 CPU，更省显存
+                offload_buffers=True,
             )
 
-            # 后续就可以正常用 model 了
-
+            # 可选：运行前做一次健检，确保没有 meta / 设备错配
+            bad = []
+            for n, p in model.named_parameters():
+                if getattr(p, "is_meta", False):
+                    bad.append(("param", n, "meta"))
+            for n, b in model.named_buffers():
+                if isinstance(b, torch.Tensor) and getattr(b, "is_meta", False):
+                    bad.append(("buffer", n, "meta"))
+            if bad:
+                raise RuntimeError(f"[Found META tensors after dispatch] {bad[:10]}")
+            
             args.device = 'cuda'
         else:  # cpu
             model = VibeVoiceForConditionalGenerationInference.from_pretrained(
