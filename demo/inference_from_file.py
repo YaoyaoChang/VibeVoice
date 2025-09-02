@@ -299,7 +299,6 @@ def main():
             # )
             from accelerate import infer_auto_device_map, dispatch_model
             from accelerate.utils import get_balanced_memory
-            import torch, os
 
             offload_dir = "/content/offload"
             os.makedirs(offload_dir, exist_ok=True)
@@ -314,7 +313,7 @@ def main():
             )
 
             # 2) 计算内存上限 & 自动推断设备映射（包含 buffers，且缺省回落到 CPU）
-            max_mem = {"cuda:0": "15GiB", "cpu": "12GiB"}
+            max_mem = {0: "15GiB", "cpu": "12GiB"}
             _ = get_balanced_memory(model, max_memory=max_mem, dtype="bfloat16")  # 可不使用返回值，但会做一次估计
             dev_map = infer_auto_device_map(
                 model,
