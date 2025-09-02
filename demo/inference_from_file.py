@@ -288,14 +288,36 @@ def main():
         elif args.device == 'T4':
             offload_dir = "/content/offload"
             os.makedirs(offload_dir, exist_ok=True)
+            # model = VibeVoiceForConditionalGenerationInference.from_pretrained(
+            #     args.model_path,
+            #     torch_dtype=torch.bfloat16,
+            #     device_map="auto", 
+            #     max_memory = {0: '15GiB', 'cpu': '12GiB'},
+            #     offload_folder=offload_dir,
+            #     low_cpu_mem_usage=False,
+            #     attn_implementation='sdpa',
+            # )
+            
+            from accelerate import infer_auto_device_map, dispatch_model, get_balanced_memory
             model = VibeVoiceForConditionalGenerationInference.from_pretrained(
                 args.model_path,
                 torch_dtype=torch.bfloat16,
-                device_map="auto", 
-                max_memory = {0: '15GiB', 'cpu': '12GiB'},
-                offload_folder=offload_dir,
-                low_cpu_mem_usage=False,
-                attn_implementation='sdpa',
+                device_map=None,              # 先别自动分配
+                low_cpu_mem_usage=False,      # 明确关闭
+                attn_implementation="sdpa",
+            )
+            max_mem = {0: "15GiB", "cpu": "12GiB"}
+            balanced = get_balanced_memory(model, max_memory=max_mem, dtype="bfloat16")
+            dev_map = infer_auto_device_map(
+                model,
+                max_memory=max_mem,
+                no_split_module_classes=[],   # 如有需要可以填入不切分的模块名
+                dtype="bfloat16",
+            )
+            model = dispatch_model(
+                model,
+                device_map=dev_map,
+                offload_dir=offload_dir,
             )
             args.device = 'cuda'
         else:  # cpu
