@@ -457,61 +457,144 @@ def main():
             #             setattr(model, name, new_buf)
 
             # method 5
-            from accelerate import init_empty_weights, infer_auto_device_map, load_checkpoint_and_dispatch
-            from vibevoice.modular.configuration_vibevoice import VibeVoiceConfig
+            # from accelerate import init_empty_weights, infer_auto_device_map, load_checkpoint_and_dispatch
+            # from vibevoice.modular.configuration_vibevoice import VibeVoiceConfig
 
+            # offload_dir = "/content/offload"
+            # os.makedirs(offload_dir, exist_ok=True)
+
+            # dtype = torch.float16  # T4 只支持 fp16
+            # max_mem = {0: "14GiB", "cpu": "12GiB"}
+
+            # # 1) 先用 meta 初始化模型，避免占用 CPU 内存
+            # with init_empty_weights():
+            #     cfg = VibeVoiceConfig.from_pretrained(args.model_path)
+            #     model = VibeVoiceForConditionalGenerationInference(cfg)
+
+            #     # 2) 在“自动分配之前”，确保两个 buffer 至少是 Tensor（哪怕是 meta Tensor）
+            #     #    注意：大多数 HF 模型真正的子模块在 model.model 里
+            #     core = getattr(model, "model", model)
+            #     for name in ("speech_bias_factor", "speech_scaling_factor"):
+            #         val = getattr(core, name, None)
+            #         if not isinstance(val, torch.Tensor):
+            #             # 注册成标量 meta tensor；persistent=False 避免写回权重
+            #             core.register_buffer(name, torch.zeros((), device="meta", dtype=dtype), persistent=False)
+            #         elif not getattr(val, "is_meta", False):
+            #             # 如果是实 tensor，把它先替换成 meta 占位，后面再实体化
+            #             core.register_buffer(name, torch.zeros_like(val, device="meta"), persistent=False)
+
+            # # 3) 自动推断 device_map（此时不会因“无 device”而报错）
+            # dev_map = infer_auto_device_map(
+            #     model,
+            #     max_memory=max_mem,
+            #     dtype=dtype,
+            #     no_split_module_classes=[],  # 需要的话把不希望切分的模块类名放进来
+            # )
+
+            # # 4) 直接按映射加载并分发，启用 offload（不会在 CPU 聚堆）
+            # model = load_checkpoint_and_dispatch(
+            #     model,
+            #     checkpoint=args.model_path,
+            #     device_map=dev_map,
+            #     dtype=dtype,
+            #     offload_folder=offload_dir,
+            #     offload_buffers=True,   # buffer 也可落盘
+            # )
+
+            # # 5) 现在把这两个 buffer 实体化到你想要的设备（CPU 或 GPU）
+            # core = getattr(model, "model", model)
+            # for name in ("speech_bias_factor", "speech_scaling_factor"):
+            #     if hasattr(core, name):
+            #         buf = getattr(core, name)
+            #         # 如果还在 meta，就放成标量 0；如需保持原 shape，可改成 zeros_like
+            #         if isinstance(buf, torch.Tensor) and getattr(buf, "is_meta", False):
+            #             core.register_buffer(name, torch.zeros((), dtype=dtype, device="cpu"), persistent=False)
+            #         else:
+            #             setattr(core, name, buf.to("cpu"))
+
+            # method 6
+            from accelerate import init_empty_weights, infer_auto_device_map, load_checkpoint_and_dispatch
+
+            # ---- 配置区（按需改）----
+            weights_location = args.model_path            # 也可以直接写 "microsoft/VibeVoice-7B" 这类 Hub ID
             offload_dir = "/content/offload"
             os.makedirs(offload_dir, exist_ok=True)
 
-            dtype = torch.float16  # T4 只支持 fp16
-            max_mem = {0: "14GiB", "cpu": "12GiB"}
+            dtype = torch.float16                         # T4 没有 bf16
+            max_mem = {0: "14.5GiB", "cpu": "12GiB"}      # 按你机器情况调整
+            no_split = ['Block']                          # 你想保持不切分的模块类名
+            os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "max_split_size_mb:128,expandable_segments:True")
 
-            # 1) 先用 meta 初始化模型，避免占用 CPU 内存
+            # ---- 1) meta 初始化，先把模型骨架搭起来 ----
+            from vibevoice.modular.configuration_vibevoice import VibeVoiceConfig
+            from vibevoice.modular.modeling_vibevoice_inference import VibeVoiceForConditionalGenerationInference
+
             with init_empty_weights():
-                cfg = VibeVoiceConfig.from_pretrained(args.model_path)
+                cfg = VibeVoiceConfig.from_pretrained(weights_location)
                 model = VibeVoiceForConditionalGenerationInference(cfg)
 
-                # 2) 在“自动分配之前”，确保两个 buffer 至少是 Tensor（哪怕是 meta Tensor）
-                #    注意：大多数 HF 模型真正的子模块在 model.model 里
-                core = getattr(model, "model", model)
+                # 这两个自定义 buffer 有时不是 Tensor 或无 device；先注册成 meta Tensor 占位
                 for name in ("speech_bias_factor", "speech_scaling_factor"):
-                    val = getattr(core, name, None)
-                    if not isinstance(val, torch.Tensor):
-                        # 注册成标量 meta tensor；persistent=False 避免写回权重
-                        core.register_buffer(name, torch.zeros((), device="meta", dtype=dtype), persistent=False)
-                    elif not getattr(val, "is_meta", False):
-                        # 如果是实 tensor，把它先替换成 meta 占位，后面再实体化
-                        core.register_buffer(name, torch.zeros_like(val, device="meta"), persistent=False)
+                    val = getattr(model, name, None)
+                    if not isinstance(val, torch.Tensor) or str(getattr(val, "device", "")) == "" or str(val.device) == "meta":
+                        default_val = getattr(cfg, name, 1.0)  # 缺省值兜底
+                        meta_t = torch.tensor(default_val, dtype=dtype, device="meta")
+                        try:
+                            model.register_buffer(name, meta_t, persistent=False)
+                        except Exception:
+                            setattr(model, name, meta_t)
 
-            # 3) 自动推断 device_map（此时不会因“无 device”而报错）
-            dev_map = infer_auto_device_map(
+            # ---- 2) 推断设备映射（使用显存/内存上限）----
+            device_map = infer_auto_device_map(
                 model,
                 max_memory=max_mem,
                 dtype=dtype,
-                no_split_module_classes=[],  # 需要的话把不希望切分的模块类名放进来
+                no_split_module_classes=no_split,    # 需要整块不切时再加别的类名
             )
 
-            # 4) 直接按映射加载并分发，启用 offload（不会在 CPU 聚堆）
+            # ---- 3) 按映射加载并分发；同时允许把权重/缓冲 offload 到磁盘 ----
             model = load_checkpoint_and_dispatch(
                 model,
-                checkpoint=args.model_path,
-                device_map=dev_map,
+                checkpoint=weights_location,
+                device_map=device_map,               # 也可换成 "auto"，但明确映射更可控
                 dtype=dtype,
                 offload_folder=offload_dir,
-                offload_buffers=True,   # buffer 也可落盘
+                offload_buffers=True,                # 让 buffer 也能落盘
             )
 
-            # 5) 现在把这两个 buffer 实体化到你想要的设备（CPU 或 GPU）
-            core = getattr(model, "model", model)
-            for name in ("speech_bias_factor", "speech_scaling_factor"):
-                if hasattr(core, name):
-                    buf = getattr(core, name)
-                    # 如果还在 meta，就放成标量 0；如需保持原 shape，可改成 zeros_like
-                    if isinstance(buf, torch.Tensor) and getattr(buf, "is_meta", False):
-                        core.register_buffer(name, torch.zeros((), dtype=dtype, device="cpu"), persistent=False)
-                    else:
-                        setattr(core, name, buf.to("cpu"))
+            # ---- 4) 清理残留的 meta buffer：统一实体化到对应模块设备 ----
+            def _target_device_for(name: str, dmap: dict, default="cpu"):
+                parts = name.split(".")[:-1]  # 去掉叶子名（buffer 本身），只保留模块路径
+                while parts:
+                    key = ".".join(parts)
+                    if key in dmap:
+                        dev = dmap[key]
+                        return "cpu" if dev == "disk" else dev
+                    parts.pop()
+                return default
 
+            with torch.no_grad():
+                for buf_name, buf in list(model.named_buffers(remove_duplicate=False)):
+                    if isinstance(buf, torch.Tensor) and (getattr(buf, "is_meta", False) or str(buf.device) == "meta"):
+                        dev = _target_device_for(buf_name, device_map, default="cpu")
+                        # 尽量保持原 dtype；若不可用则回退到 FP16
+                        tgt_dtype = buf.dtype if buf.dtype != torch.float32 or dtype is None else dtype
+                        try:
+                            new_buf = torch.zeros(buf.shape, dtype=tgt_dtype, device=dev)
+                        except Exception:
+                            new_buf = torch.zeros(buf.shape, dtype=dtype, device=dev)
+
+                        # 把 buffer 写回到原模块
+                        *parents, leaf = buf_name.split(".")
+                        m = model
+                        for p in parents:
+                            m = getattr(m, p)
+                        if leaf in m._buffers:
+                            m._buffers[leaf] = new_buf
+                        else:
+                            m.register_buffer(leaf, new_buf, persistent=False)
+                            
+                            
             args.device = 'cuda'
         else:  # cpu
             model = VibeVoiceForConditionalGenerationInference.from_pretrained(
