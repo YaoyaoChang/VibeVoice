@@ -298,7 +298,8 @@ def main():
             #     attn_implementation='sdpa',
             # )
             
-            from accelerate import infer_auto_device_map, dispatch_model, get_balanced_memory
+            from accelerate import infer_auto_device_map, dispatch_model
+            from accelerate.utils import get_balanced_memory
             model = VibeVoiceForConditionalGenerationInference.from_pretrained(
                 args.model_path,
                 torch_dtype=torch.bfloat16,
