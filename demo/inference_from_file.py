@@ -319,7 +319,6 @@ def main():
                 model,
                 max_memory=max_mem,
                 dtype="bfloat16",
-                fallback_to_cpu=True,       # ★ 未匹配项回落到 CPU
             )
 
             # 3) 针对遗漏的自定义 buffer 做兜底（有些结构里 infer 仍可能漏）
