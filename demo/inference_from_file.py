@@ -319,7 +319,6 @@ def main():
                 model,
                 max_memory=max_mem,
                 dtype="bfloat16",
-                include_buffers=True,
                 fallback_to_cpu=True,       # ★ 未匹配项回落到 CPU
             )
 
