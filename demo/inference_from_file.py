@@ -286,6 +286,7 @@ def main():
                 attn_implementation=attn_impl_primary,
             )
         elif args.device == 'T4':
+            print(f"Using special loading for T4 GPU")
             offload_dir = "/content/offload"
             os.makedirs(offload_dir, exist_ok=True)
             # model = VibeVoiceForConditionalGenerationInference.from_pretrained(
@@ -315,17 +316,17 @@ def main():
             )
 
             # 1.1) 将所有“meta buffer”先在 CPU 实体化（兜底防炸）
-            patched = []
-            for mod_name, module in model.named_modules():
-                for bname, buf in list(module._buffers.items()):
-                    if isinstance(buf, torch.Tensor) and getattr(buf, "is_meta", False):
-                        module._buffers[bname] = torch.zeros(
-                            buf.shape, dtype=(buf.dtype or dtype), device="cpu"
-                        )
-                        full = f"{mod_name+'.' if mod_name else ''}{bname}"
-                        patched.append(full)
-            if patched:
-                print("[materialized meta buffers on CPU]:", patched)
+            # patched = []
+            # for mod_name, module in model.named_modules():
+            #     for bname, buf in list(module._buffers.items()):
+            #         if isinstance(buf, torch.Tensor) and getattr(buf, "is_meta", False):
+            #             module._buffers[bname] = torch.zeros(
+            #                 buf.shape, dtype=(buf.dtype or dtype), device="cpu"
+            #             )
+            #             full = f"{mod_name+'.' if mod_name else ''}{bname}"
+            #             patched.append(full)
+            # if patched:
+            #     print("[materialized meta buffers on CPU]:", patched)
 
             # 2) 自动推断设备映射
             max_mem = {0: "14GiB", "cpu": "12GiB"}
