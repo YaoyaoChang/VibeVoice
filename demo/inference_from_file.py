@@ -293,6 +293,7 @@ def main():
                 max_memory = {'cuda:0': '15GiB', 'cpu': '12GiB'},
                 attn_implementation='sdpa',
             )
+            args.device = 'cuda'
         else:  # cpu
             model = VibeVoiceForConditionalGenerationInference.from_pretrained(
                 args.model_path,
