@@ -373,7 +373,6 @@ def main():
             #     raise RuntimeError(f"[Found META tensors after dispatch] {bad[:10]}")
             
             
-            import os, torch
             from accelerate import infer_auto_device_map, dispatch_model
 
             offload_dir = "/content/offload"
