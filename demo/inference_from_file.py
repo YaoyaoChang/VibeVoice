@@ -294,6 +294,7 @@ def main():
                 device_map="auto", 
                 max_memory = {0: '15GiB', 'cpu': '12GiB'},
                 offload_folder=offload_dir,
+                low_cpu_mem_usage=False,
                 attn_implementation='sdpa',
             )
             args.device = 'cuda'
