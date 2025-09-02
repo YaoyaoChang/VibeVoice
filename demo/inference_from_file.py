@@ -553,10 +553,10 @@ def main():
     )
 
     # Move tensors to target device
-    target_device = args.device if args.device != "cpu" else "cpu"
-    for k, v in inputs.items():
-        if torch.is_tensor(v):
-            inputs[k] = v.to(target_device)
+    # target_device = args.device if args.device != "cpu" else "cpu"
+    # for k, v in inputs.items():
+    #     if torch.is_tensor(v):
+    #         inputs[k] = v.to(target_device)
 
     print(f"Starting generation with cfg_scale: {args.cfg_scale}")
 
