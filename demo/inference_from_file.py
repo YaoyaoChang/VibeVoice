@@ -290,7 +290,7 @@ def main():
             offload_dir = "/content/offload"
             os.makedirs(offload_dir, exist_ok=True)
             
-            
+            # method 1
             # model = VibeVoiceForConditionalGenerationInference.from_pretrained(
             #     args.model_path,
             #     torch_dtype=torch.bfloat16,
@@ -301,6 +301,7 @@ def main():
             #     attn_implementation='sdpa',
             # )
             
+            # method 2
             # from accelerate import infer_auto_device_map, dispatch_model
             # from accelerate.utils import get_balanced_memory
 
@@ -372,7 +373,7 @@ def main():
             # if bad:
             #     raise RuntimeError(f"[Found META tensors after dispatch] {bad[:10]}")
             
-            
+            # method 3
             # from accelerate import infer_auto_device_map, dispatch_model
 
             # offload_dir = "/content/offload"
@@ -423,14 +424,14 @@ def main():
             #     offload_buffers=True,
             # )
 
-            from transformers import AutoConfig
-
+            # method 4
+            
             offload_dir = "/content/offload"
             os.makedirs(offload_dir, exist_ok=True)
 
             dtype = torch.float16  # T4 没有 bfloat16
             max_mem = {
-                "cuda:0": "14.5GiB",   # 你允许的 GPU 峰值
+                0: "14.5GiB",   # 你允许的 GPU 峰值
                 "cpu":    "12GiB",   # 你允许的 CPU 峰值
                 # 注意：这里不用在 max_memory 里写 "disk"
             }
