@@ -289,85 +289,86 @@ def main():
             print(f"Using special loading for T4 GPU")
             offload_dir = "/content/offload"
             os.makedirs(offload_dir, exist_ok=True)
-            # model = VibeVoiceForConditionalGenerationInference.from_pretrained(
-            #     args.model_path,
-            #     torch_dtype=torch.bfloat16,
-            #     device_map="auto", 
-            #     max_memory = {0: '15GiB', 'cpu': '12GiB'},
-            #     offload_folder=offload_dir,
-            #     low_cpu_mem_usage=False,
-            #     attn_implementation='sdpa',
-            # )
-            from accelerate import infer_auto_device_map, dispatch_model
-            from accelerate.utils import get_balanced_memory
-
-            offload_dir = "/content/offload"
-            os.makedirs(offload_dir, exist_ok=True)
-
-            dtype = torch.float16  # ★ T4 用 FP16
-
-            # 1) 先整机载入（非 meta 模式）
             model = VibeVoiceForConditionalGenerationInference.from_pretrained(
                 args.model_path,
-                torch_dtype=dtype,
-                device_map=None,
-                low_cpu_mem_usage=False,   # 关键：避免 meta 加载
-                attn_implementation="sdpa",
+                torch_dtype=torch.bfloat16,
+                device_map="auto", 
+                max_memory = {0: '14GiB', 'cpu': '12GiB'},
+                offload_folder=offload_dir,
+                low_cpu_mem_usage=False,
+                attn_implementation='sdpa',
             )
+            
+            # from accelerate import infer_auto_device_map, dispatch_model
+            # from accelerate.utils import get_balanced_memory
 
-            # 1.1) 将所有“meta buffer”先在 CPU 实体化（兜底防炸）
-            # patched = []
-            # for mod_name, module in model.named_modules():
-            #     for bname, buf in list(module._buffers.items()):
-            #         if isinstance(buf, torch.Tensor) and getattr(buf, "is_meta", False):
-            #             module._buffers[bname] = torch.zeros(
-            #                 buf.shape, dtype=(buf.dtype or dtype), device="cpu"
-            #             )
-            #             full = f"{mod_name+'.' if mod_name else ''}{bname}"
-            #             patched.append(full)
-            # if patched:
-            #     print("[materialized meta buffers on CPU]:", patched)
+            # offload_dir = "/content/offload"
+            # os.makedirs(offload_dir, exist_ok=True)
 
-            # 2) 自动推断设备映射
-            max_mem = {0: "14GiB", "cpu": "12GiB"}
-            _ = get_balanced_memory(model, max_memory=max_mem, dtype=str(dtype).split(".")[-1])
-            dev_map = infer_auto_device_map(
-                model,
-                max_memory=max_mem,
-                no_split_module_classes=[],  # 有需要可填你的 block 名
-                dtype=str(dtype).split(".")[-1],
-            )
+            # dtype = torch.float16  # ★ T4 用 FP16
 
-            # 2.1) 覆盖兜底：把所有“未被任何前缀覆盖”的参数/缓冲区指定到 CPU
-            def _covered(name: str, mapping: dict) -> bool:
-                return any(name == k or name.startswith(k + ".") for k in mapping)
+            # # 1) 先整机载入（非 meta 模式）
+            # model = VibeVoiceForConditionalGenerationInference.from_pretrained(
+            #     args.model_path,
+            #     torch_dtype=dtype,
+            #     device_map=None,
+            #     low_cpu_mem_usage=False,   # 关键：避免 meta 加载
+            #     attn_implementation="sdpa",
+            # )
 
-            extra = []
-            for name, _ in list(model.named_parameters()) + list(model.named_buffers()):
-                if not _covered(name, dev_map):
-                    dev_map[name] = "cpu"
-                    extra.append(name)
-            if extra:
-                print(f"[device_map expanded to cover {len(extra)} items on CPU]")
+            # # 1.1) 将所有“meta buffer”先在 CPU 实体化（兜底防炸）
+            # # patched = []
+            # # for mod_name, module in model.named_modules():
+            # #     for bname, buf in list(module._buffers.items()):
+            # #         if isinstance(buf, torch.Tensor) and getattr(buf, "is_meta", False):
+            # #             module._buffers[bname] = torch.zeros(
+            # #                 buf.shape, dtype=(buf.dtype or dtype), device="cpu"
+            # #             )
+            # #             full = f"{mod_name+'.' if mod_name else ''}{bname}"
+            # #             patched.append(full)
+            # # if patched:
+            # #     print("[materialized meta buffers on CPU]:", patched)
 
-            # 3) 派发，允许 buffer 卸载
-            model = dispatch_model(
-                model,
-                device_map=dev_map,
-                offload_dir=offload_dir,
-                offload_buffers=True,
-            )
+            # # 2) 自动推断设备映射
+            # max_mem = {0: "14GiB", "cpu": "12GiB"}
+            # _ = get_balanced_memory(model, max_memory=max_mem, dtype=str(dtype).split(".")[-1])
+            # dev_map = infer_auto_device_map(
+            #     model,
+            #     max_memory=max_mem,
+            #     no_split_module_classes=[],  # 有需要可填你的 block 名
+            #     dtype=str(dtype).split(".")[-1],
+            # )
 
-            # 可选：运行前做一次健检，确保没有 meta / 设备错配
-            bad = []
-            for n, p in model.named_parameters():
-                if getattr(p, "is_meta", False):
-                    bad.append(("param", n, "meta"))
-            for n, b in model.named_buffers():
-                if isinstance(b, torch.Tensor) and getattr(b, "is_meta", False):
-                    bad.append(("buffer", n, "meta"))
-            if bad:
-                raise RuntimeError(f"[Found META tensors after dispatch] {bad[:10]}")
+            # # 2.1) 覆盖兜底：把所有“未被任何前缀覆盖”的参数/缓冲区指定到 CPU
+            # def _covered(name: str, mapping: dict) -> bool:
+            #     return any(name == k or name.startswith(k + ".") for k in mapping)
+
+            # extra = []
+            # for name, _ in list(model.named_parameters()) + list(model.named_buffers()):
+            #     if not _covered(name, dev_map):
+            #         dev_map[name] = "cpu"
+            #         extra.append(name)
+            # if extra:
+            #     print(f"[device_map expanded to cover {len(extra)} items on CPU]")
+
+            # # 3) 派发，允许 buffer 卸载
+            # model = dispatch_model(
+            #     model,
+            #     device_map=dev_map,
+            #     offload_dir=offload_dir,
+            #     offload_buffers=True,
+            # )
+
+            # # 可选：运行前做一次健检，确保没有 meta / 设备错配
+            # bad = []
+            # for n, p in model.named_parameters():
+            #     if getattr(p, "is_meta", False):
+            #         bad.append(("param", n, "meta"))
+            # for n, b in model.named_buffers():
+            #     if isinstance(b, torch.Tensor) and getattr(b, "is_meta", False):
+            #         bad.append(("buffer", n, "meta"))
+            # if bad:
+            #     raise RuntimeError(f"[Found META tensors after dispatch] {bad[:10]}")
             
             args.device = 'cuda'
         else:  # cpu
