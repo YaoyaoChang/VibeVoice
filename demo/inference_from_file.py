@@ -426,35 +426,91 @@ def main():
 
             # method 4
             
+            # offload_dir = "/content/offload"
+            # os.makedirs(offload_dir, exist_ok=True)
+
+            # dtype = torch.float16  # T4 没有 bfloat16
+            # max_mem = {
+            #     0: "14.5GiB",   # 你允许的 GPU 峰值
+            #     "cpu":    "12GiB",   # 你允许的 CPU 峰值
+            #     # 注意：这里不用在 max_memory 里写 "disk"
+            # }
+
+            # model = VibeVoiceForConditionalGenerationInference.from_pretrained(
+            #     args.model_path,
+            #     torch_dtype=dtype,
+            #     device_map="auto",                 # 关键：让 HF/accelerate 直接按 max_memory 派发
+            #     max_memory=max_mem,                # 关键：限制 GPU/CPU 峰值内存
+            #     low_cpu_mem_usage=True,            # 关键：避免在 CPU 上堆满 state_dict
+            #     offload_state_dict=True,           # 关键：加载时把没用到的 state_dict 先 offload 到磁盘
+            #     offload_folder=offload_dir,        # offload 的路径
+            #     attn_implementation="sdpa",
+            # )
+
+            # # ——仅当这两个 buffer 仍是 meta 时，才“实体化到目标设备”（不覆盖 checkpoint 的值）——
+            # for name in ("speech_bias_factor", "speech_scaling_factor"):
+            #     if hasattr(model, name):
+            #         buf = getattr(model, name)
+            #         if isinstance(buf, torch.Tensor) and getattr(buf, "is_meta", False):
+            #             device = torch.device("cpu")  # 想放 GPU 就用 torch.device("cuda:0")
+            #             new_buf = torch.zeros(buf.shape, dtype=dtype, device=device)
+            #             setattr(model, name, new_buf)
+
+            # method 5
+            from accelerate import init_empty_weights, infer_auto_device_map, load_checkpoint_and_dispatch
+            from vibevoice.modular.configuration_vibevoice import VibeVoiceConfig
+
             offload_dir = "/content/offload"
             os.makedirs(offload_dir, exist_ok=True)
 
-            dtype = torch.float16  # T4 没有 bfloat16
-            max_mem = {
-                0: "14.5GiB",   # 你允许的 GPU 峰值
-                "cpu":    "12GiB",   # 你允许的 CPU 峰值
-                # 注意：这里不用在 max_memory 里写 "disk"
-            }
+            dtype = torch.float16  # T4 只支持 fp16
+            max_mem = {0: "14.5GiB", "cpu": "12GiB"}
 
-            model = VibeVoiceForConditionalGenerationInference.from_pretrained(
-                args.model_path,
-                torch_dtype=dtype,
-                device_map="auto",                 # 关键：让 HF/accelerate 直接按 max_memory 派发
-                max_memory=max_mem,                # 关键：限制 GPU/CPU 峰值内存
-                low_cpu_mem_usage=True,            # 关键：避免在 CPU 上堆满 state_dict
-                offload_state_dict=True,           # 关键：加载时把没用到的 state_dict 先 offload 到磁盘
-                offload_folder=offload_dir,        # offload 的路径
-                attn_implementation="sdpa",
+            # 1) 先用 meta 初始化模型，避免占用 CPU 内存
+            with init_empty_weights():
+                cfg = VibeVoiceConfig.from_pretrained(args.model_path)
+                model = VibeVoiceForConditionalGenerationInference(cfg)
+
+                # 2) 在“自动分配之前”，确保两个 buffer 至少是 Tensor（哪怕是 meta Tensor）
+                #    注意：大多数 HF 模型真正的子模块在 model.model 里
+                core = getattr(model, "model", model)
+                for name in ("speech_bias_factor", "speech_scaling_factor"):
+                    val = getattr(core, name, None)
+                    if not isinstance(val, torch.Tensor):
+                        # 注册成标量 meta tensor；persistent=False 避免写回权重
+                        core.register_buffer(name, torch.zeros((), device="meta", dtype=dtype), persistent=False)
+                    elif not getattr(val, "is_meta", False):
+                        # 如果是实 tensor，把它先替换成 meta 占位，后面再实体化
+                        core.register_buffer(name, torch.zeros_like(val, device="meta"), persistent=False)
+
+            # 3) 自动推断 device_map（此时不会因“无 device”而报错）
+            dev_map = infer_auto_device_map(
+                model,
+                max_memory=max_mem,
+                dtype=dtype,
+                no_split_module_classes=[],  # 需要的话把不希望切分的模块类名放进来
             )
 
-            # ——仅当这两个 buffer 仍是 meta 时，才“实体化到目标设备”（不覆盖 checkpoint 的值）——
+            # 4) 直接按映射加载并分发，启用 offload（不会在 CPU 聚堆）
+            model = load_checkpoint_and_dispatch(
+                model,
+                checkpoint=args.model_path,
+                device_map=dev_map,
+                dtype=dtype,
+                offload_folder=offload_dir,
+                offload_buffers=True,   # buffer 也可落盘
+            )
+
+            # 5) 现在把这两个 buffer 实体化到你想要的设备（CPU 或 GPU）
+            core = getattr(model, "model", model)
             for name in ("speech_bias_factor", "speech_scaling_factor"):
-                if hasattr(model, name):
-                    buf = getattr(model, name)
+                if hasattr(core, name):
+                    buf = getattr(core, name)
+                    # 如果还在 meta，就放成标量 0；如需保持原 shape，可改成 zeros_like
                     if isinstance(buf, torch.Tensor) and getattr(buf, "is_meta", False):
-                        device = torch.device("cpu")  # 想放 GPU 就用 torch.device("cuda:0")
-                        new_buf = torch.zeros(buf.shape, dtype=dtype, device=device)
-                        setattr(model, name, new_buf)
+                        core.register_buffer(name, torch.zeros((), dtype=dtype, device="cpu"), persistent=False)
+                    else:
+                        setattr(core, name, buf.to("cpu"))
 
             args.device = 'cuda'
         else:  # cpu
