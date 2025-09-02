@@ -290,7 +290,7 @@ def main():
                 args.model_path,
                 torch_dtype=load_dtype,
                 device_map="auto", 
-                max_memory = {'cuda:0': '15GiB', 'cpu': '12GiB'},
+                max_memory = {'cuda': '15GiB', 'cpu': '12GiB'},
                 attn_implementation='sdpa',
             )
             args.device = 'cuda'
