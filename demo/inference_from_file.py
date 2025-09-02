@@ -286,11 +286,14 @@ def main():
                 attn_implementation=attn_impl_primary,
             )
         elif args.device == 'T4':
+            offload_dir = "/content/offload"
+            os.makedirs(offload_dir, exist_ok=True)
             model = VibeVoiceForConditionalGenerationInference.from_pretrained(
                 args.model_path,
-                torch_dtype=load_dtype,
+                torch_dtype=torch.bfloat16,
                 device_map="auto", 
                 max_memory = {0: '15GiB', 'cpu': '12GiB'},
+                offload_folder=offload_dir,
                 attn_implementation='sdpa',
             )
             args.device = 'cuda'
