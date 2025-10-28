@@ -175,3 +175,7 @@ tags
 /checkpoints/
 exp
 .gradio/
+
+# demo tmp files
+/demo/recordings/
+tmp.py
