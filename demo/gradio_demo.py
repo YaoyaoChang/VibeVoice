@@ -982,7 +982,7 @@ def create_demo_interface(demo_instance: VibeVoiceDemo):
                     )
                     speaker_selections.append(speaker_1)
                     
-                    gr.Markdown("**Or record your own voice:**")
+                    # gr.Markdown("**Or record your own voice:**")
                     mic_input = gr.Audio(
                         sources=["microphone"],
                         type="numpy",
