@@ -1,0 +1,5 @@
+Speaker 1: Alright, welcome everyone. Today we’re diving into VibeVoice, a model that can generate full podcast conversations directly from text, which is pretty exciting.
+Speaker 2: Well, that’s quite intriguing. AI being able to carry out natural back-and-forth dialogue could really change how we share information.
+Speaker 1: You know, Kevin, what’s really cool is how VibeVoice keeps each speaker’s tone and style consistent, making the conversation feel more like real humans chatting.
+Speaker 2: And of course, once you scale it up to long-form content, suddenly personalized podcasts become not just possible but practical.
+Speaker 1: Right, and it feels like we’re just getting started, like audio creation is ready to jump into a brand-new era.
