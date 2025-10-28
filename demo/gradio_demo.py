@@ -246,6 +246,9 @@ class VibeVoiceDemo:
                     audio_path = speaker_name
                     # audio_path = "/data/yaoyaochang/code/speech/VibeVoice/demo/voices/BillGates.wav"
                 audio_data = self.read_audio(audio_path)
+                if len(audio_data) == 0:                    
+                    audio_path = os.path.join(RECORDINGS_DIR, speaker_name)
+                    audio_data = self.read_audio(audio_path)
                 if len(audio_data) == 0:
                     self.is_generating = False
                     raise gr.Error(f"Error: Failed to load audio for {speaker_name}")
@@ -697,8 +700,8 @@ def save_microphone_recording(audio_input):
         audio_data = _ensure_int16_wav(np.asarray(audio_data))
         
         # Create filename with timestamp
-        ts = datetime.now().strftime("%Y%m%d-%H%M%S-%f")[:-3]
-        filename = f"custom_voice_{ts}.wav"
+        ts = datetime.now().strftime("%Y%m%d-%H:%M:%S")
+        filename = f"{ts}.wav"
         filepath = os.path.join(RECORDINGS_DIR, filename)
         
         # Save WAV file
@@ -975,35 +978,31 @@ def create_demo_interface(demo_instance: VibeVoiceDemo):
                         label="Speaker 1",
                         visible=True,
                         elem_classes="speaker-item",
-                        allow_custom_value=True  # 允许自定义值（录音文件路径）
+                        allow_custom_value=True
                     )
                     speaker_selections.append(speaker_1)
                     
                     gr.Markdown("**Or record your own voice:**")
-                    with gr.Row():
-                        mic_input = gr.Audio(
-                            sources=["microphone"],
-                            type="numpy",
-                            label="🎤 Record Voice Sample",
-                            interactive=True,
-                            streaming=False,
-                            show_download_button=False
-                        )
-                        save_recording_btn = gr.Button(
-                            "💾 Save Recording",
-                            size="sm",
-                            variant="secondary"
-                        )
+                    mic_input = gr.Audio(
+                        sources=["microphone"],
+                        type="numpy",
+                        label="🎤 Record Voice Sample",
+                        interactive=True,
+                        streaming=False,
+                        show_download_button=False
+                    )
                     
                     recording_status = gr.Textbox(
                         label="Recording Status",
                         value="",
                         interactive=False,
-                        lines=1
+                        lines=1,
+                        autoscroll=False,
+                        visible=False
                     )
                     recorded_file_path = gr.Textbox(
                         value="",
-                        visible=False  # Hidden state variable to store file path
+                        visible=False
                     )
                 
                 # Speaker 2-4
@@ -1146,12 +1145,13 @@ Or paste text directly and it will auto-assign speakers.""",
                 # 获取当前 choices 并添加新的录音文件路径
                 current_choices = available_speaker_names.copy()
                 if filepath not in current_choices:
-                    current_choices.append(filepath)
+                    filename = os.path.basename(filepath)
+                    current_choices.append(filename)
                 return (
                     status,  # recording_status
                     filepath,  # recorded_file_path
                     gr.update(
-                        value=filepath,
+                        value=filename,
                         choices=current_choices  # 更新 choices 列表
                     )  # speaker_1
                 )
@@ -1174,8 +1174,8 @@ Or paste text directly and it will auto-assign speakers.""",
             outputs=speaker_selections
         )
         
-        # Connect save recording button
-        save_recording_btn.click(
+        # Connect save recording on mic_input change
+        mic_input.change(
             fn=save_recording_handler,
             inputs=[mic_input],
             outputs=[recording_status, recorded_file_path, speaker_1],
