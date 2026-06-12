@@ -984,9 +984,9 @@ def create_demo_interface(demo_instance: VibeVoiceDemo):
                     
                     # gr.Markdown("**Or record your own voice:**")
                     mic_input = gr.Audio(
-                        sources=["microphone"],
+                        sources=["upload", "microphone"],
                         type="numpy",
-                        label="🎤 Record Voice Sample",
+                        label="🎤 Record or Upload Voice Sample",
                         interactive=True,
                         streaming=False,
                         show_download_button=False
@@ -1290,7 +1290,7 @@ Or paste text directly and it will auto-assign speakers.""",
         gr.Markdown("""
         ### 💡 **Usage Tips**
         
-        - **Record Your Voice**: Use the microphone under Speaker 1 to record a custom voice sample
+        - **Record or Upload Your Voice**: Use the microphone under Speaker 1 to record, or upload a local audio file, as a custom voice sample
         - Click **💾 Save Recording** to save your recording and use it for Speaker 1
         - Click **🚀 Generate Podcast** to start audio generation
         - **Live Streaming** tab shows audio as it's being generated (may have slight pauses)
